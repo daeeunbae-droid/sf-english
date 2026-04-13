@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SF English — 변형문제 패키지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf7f2;
+    --bg-2: #f3ede3;
+    --bg-3: #ece5d8;
+    --ink: #1a1510;
+    --ink-2: #3d3328;
+    --ink-dim: rgba(26,21,16,0.55);
+    --ink-faint: rgba(26,21,16,0.07);
+    --gold: #a07828;
+    --gold-light: #c9a84c;
+    --gold-dim: rgba(160,120,40,0.12);
+    --accent: #2d6abf;
+    --red: #c0392b;
+    --green: #2e7d52;
+    --border: rgba(160,120,40,0.18);
+    --shadow: 0 2px 24px rgba(26,21,16,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+  .nav-logo span { color: var(--ink-2); }
+  .nav-cta {
+    background: var(--gold);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 9px 22px;
+    border-radius: 2px;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--gold-light); }
+
+  /* ─── SECTION COMMON ─── */
+  section { padding: 120px 60px; max-width: 1200px; margin: 0 auto; }
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--gold);
+    display: inline-block;
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding-top: 140px;
+    max-width: 100%;
+    position: relative;
+    padding-left: 60px; padding-right: 60px;
+    overflow: hidden;
+    background: linear-gradient(160deg, #fdf9f3 0%, #f5ede0 100%);
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 800px 600px at 70% 50%, rgba(160,120,40,0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 600px 400px at 10% 80%, rgba(45,106,191,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(160,120,40,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(160,120,40,0.07) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 1200px; margin: 0 auto; width: 100%; }
+  .hero-kicker {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 32px;
+    color: var(--ink);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.35s forwards;
+  }
+  .hero-title em {
+    font-style: normal;
+    color: var(--gold);
+    position: relative;
+  }
+  .hero-title em::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--ink-dim);
+    max-width: 560px;
+    line-height: 1.85;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 16px; align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.65s forwards;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--gold);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 16px 32px;
+    border-radius: 2px;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(160,120,40,0.25);
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--ink-dim);
+    font-size: 0.85rem;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(26,21,16,0.25);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-secondary:hover { color: var(--ink); border-color: var(--ink); }
+
+  .hero-stats {
+    display: flex; gap: 48px;
+    margin-top: 80px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.8rem;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── PAIN POINTS ─── */
+  #pain { border-top: 1px solid var(--border); background: var(--bg); }
+  #pain .heading {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  #pain .sub {
+    color: var(--ink-dim);
+    margin-bottom: 64px;
+    font-size: 0.95rem;
+  }
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .pain-item {
+    background: var(--bg-2);
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .pain-item:hover { background: var(--bg-3); }
+  .pain-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s;
+  }
+  .pain-item:hover::before { transform: scaleX(1); }
+  .pain-q {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .pain-q::before {
+    content: '"';
+    color: var(--gold);
+    font-size: 1.6rem;
+    line-height: 0;
+    vertical-align: -6px;
+    margin-right: 4px;
+  }
+  .pain-desc {
+    font-size: 0.85rem;
+    color: var(--ink-dim);
+    line-height: 1.8;
+  }
+
+  /* ─── PRODUCT ─── */
+  #product {
+    background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-3) 100%);
+    max-width: 100%;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding-left: 0; padding-right: 0;
+  }
+  #product .inner { max-width: 1200px; margin: 0 auto; padding: 120px 60px; }
+  .product-top {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: start;
+    margin-bottom: 80px;
+  }
+  .product-heading {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.8rem, 2.8vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .product-heading span { color: var(--gold); }
+  .product-desc {
+    font-size: 0.92rem;
+    color: var(--ink-dim);
+    line-height: 1.9;
+    padding-top: 8px;
+  }
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .type-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 16px;
+    text-align: center;
+    position: relative;
+    transition: all 0.25s;
+    box-shadow: var(--shadow);
+  }
+  .type-card:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(160,120,40,0.12); }
+  .type-card.killer { border-color: rgba(192,57,43,0.3); }
+  .type-card.killer .type-name { color: var(--ink); }
+  .type-badge {
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    background: var(--red);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+  .type-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .type-sub {
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+  }
+
+  /* ─── APP SHOWCASE ─── */
+  #app { border-top: 1px solid var(--border); background: var(--bg); }
+  .app-split {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+  .app-heading {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 24px;
+    color: var(--ink);
+  }
+  .app-heading span { color: var(--gold); }
+  .app-desc {
+    font-size: 0.9rem;
+    color: var(--ink-dim);
+    line-height: 1.9;
+    margin-bottom: 36px;
+  }
+  .app-steps { display: flex; flex-direction: column; gap: 16px; }
+  .app-step {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 16px 20px;
+    background: var(--bg-2);
+    border-left: 2px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+  }
+  .step-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    min-width: 24px;
+    padding-top: 2px;
+  }
+  .step-text { font-size: 0.85rem; color: var(--ink-dim); line-height: 1.6; }
+  .step-text strong { color: var(--ink); }
+
+  /* App mockup */
+  .app-mockup {
+    background: var(--ink);
+    border: 1px solid rgba(26,21,16,0.15);
+    border-radius: 8px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(26,21,16,0.15);
+  }
+  .app-mockup::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  }
+  .mockup-bar {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .mockup-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .mockup-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.4);
+    margin-left: 8px;
+  }
+  .mockup-step-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+  }
+  .mockup-step-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold-light);
+    letter-spacing: 0.1em;
+    min-width: 60px;
+  }
+  .mockup-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 500;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .chip.active { background: var(--gold-light); color: var(--ink); border-color: var(--gold-light); }
+  .chip.default { background: transparent; color: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.15); }
+  .chip.default:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  .mockup-passage-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 6px; margin: 16px 0;
+  }
+  .psg-btn {
+    background: var(--gold-light);
+    color: var(--ink);
+    border: none;
+    border-radius: 3px;
+    padding: 8px 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+  }
+  .psg-btn.off { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.3); }
+  .psg-btn span { display: block; font-size: 0.55rem; font-weight: 400; margin-top: 2px; }
+
+  .mockup-generate {
+    margin-top: 16px;
+    width: 100%;
+    background: var(--gold-light);
+    color: var(--ink);
+    border: none;
+    padding: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.2s;
+  }
+  .mockup-generate:hover { background: #e8c97a; }
+
+  /* ─── TRUST ─── */
+  #trust { border-top: 1px solid var(--border); background: var(--bg-2); }
+  .trust-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 64px;
+  }
+  .trust-item {
+    background: #fff;
+    padding: 48px 40px;
+    box-shadow: var(--shadow);
+  }
+  .trust-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.2rem;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .trust-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .trust-desc {
+    font-size: 0.82rem;
+    color: var(--ink-dim);
+    line-height: 1.85;
+  }
+
+  /* ─── COMPARISON ─── */
+  #compare { border-top: 1px solid var(--border); background: var(--bg); }
+  .compare-heading {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .compare-sub { color: var(--ink-dim); font-size: 0.9rem; margin-bottom: 60px; }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .compare-table th {
+    padding: 20px 24px;
+    text-align: left;
+    background: var(--bg-3);
+    border-bottom: 2px solid var(--gold);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+  }
+  .compare-table th:last-child { color: var(--gold); }
+  .compare-table td {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    color: var(--ink-dim);
+    background: #fff;
+  }
+  .compare-table td:first-child { color: var(--ink); font-weight: 500; }
+  .compare-table tr:hover td { background: var(--bg-2); }
+  .check { color: var(--green); font-size: 1rem; }
+  .cross { color: rgba(26,21,16,0.2); font-size: 1rem; }
+  .gold-check { color: var(--gold); font-size: 1rem; font-weight: 700; }
+
+  /* ─── PRICING ─── */
+  #pricing {
+    border-top: 1px solid var(--border);
+    background: var(--bg-2);
+    text-align: center;
+  }
+  #pricing .heading {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  #pricing .sub { color: var(--ink-dim); font-size: 0.9rem; margin-bottom: 64px; }
+  .pricing-card {
+    max-width: 520px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 56px 48px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(160,120,40,0.1);
+  }
+  .pricing-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .pricing-badge {
+    display: inline-block;
+    background: var(--gold-dim);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+  }
+  .pricing-price {
+    font-family: 'DM Serif Display', serif;
+    font-size: 4rem;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .pricing-price sup { font-size: 1.5rem; vertical-align: top; margin-top: 12px; color: var(--ink-dim); }
+  .pricing-price sub { font-size: 1rem; color: var(--ink-dim); font-family: 'Noto Sans KR'; }
+  .pricing-note { font-size: 0.78rem; color: var(--ink-dim); margin-bottom: 40px; }
+  .pricing-includes {
+    text-align: left;
+    margin-bottom: 40px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .include-item {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 0.88rem;
+    color: var(--ink-dim);
+  }
+  .include-item .icon { color: var(--gold); font-size: 0.9rem; min-width: 18px; }
+  .include-item strong { color: var(--ink); }
+  .pricing-cta {
+    display: block;
+    background: var(--gold);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 18px 32px;
+    border-radius: 4px;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: all 0.25s;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(160,120,40,0.25);
+  }
+  .pricing-cta:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .pricing-free {
+    font-size: 0.78rem;
+    color: var(--ink-dim);
+  }
+  .pricing-free a { color: var(--gold); text-decoration: none; }
+
+  /* ─── TEACHER ─── */
+  #teacher { border-top: 1px solid var(--border); background: var(--bg); }
+  .teacher-split {
+    display: grid; grid-template-columns: 300px 1fr;
+    gap: 80px; align-items: start;
+  }
+  .teacher-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow);
+  }
+  .teacher-img {
+    width: 100%; aspect-ratio: 3/4;
+    background: linear-gradient(135deg, var(--bg-3), var(--gold-dim));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .teacher-info { padding: 24px; }
+  .teacher-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .teacher-role {
+    font-size: 0.75rem;
+    color: var(--gold);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+  .teacher-tag {
+    display: inline-block;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    font-size: 0.68rem;
+    color: var(--ink-dim);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin: 3px 2px;
+  }
+  .teacher-content .heading {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 24px;
+    color: var(--ink);
+  }
+  .teacher-content p {
+    font-size: 0.9rem;
+    color: var(--ink-dim);
+    line-height: 1.9;
+    margin-bottom: 20px;
+  }
+  .highlight-box {
+    background: var(--gold-dim);
+    border-left: 3px solid var(--gold);
+    padding: 20px 24px;
+    margin-top: 32px;
+    border-radius: 0 4px 4px 0;
+  }
+  .highlight-box p {
+    font-size: 0.88rem;
+    color: var(--ink-dim);
+    margin: 0;
+    line-height: 1.75;
+  }
+  .highlight-box strong { color: var(--gold); }
+
+  /* ─── CTA FINAL ─── */
+  #cta-final {
+    border-top: 1px solid var(--border);
+    text-align: center;
+    background: linear-gradient(160deg, var(--bg-2) 0%, var(--bg-3) 100%);
+    max-width: 100%;
+    padding: 120px 60px;
+  }
+  #cta-final .heading {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 900;
+    line-height: 1.25;
+    margin-bottom: 24px;
+    max-width: 700px;
+    margin-left: auto; margin-right: auto;
+    color: var(--ink);
+  }
+  #cta-final .sub {
+    color: var(--ink-dim);
+    font-size: 0.95rem;
+    margin-bottom: 48px;
+    max-width: 500px;
+    margin-left: auto; margin-right: auto;
+    line-height: 1.8;
+  }
+  .cta-buttons { display: flex; gap: 16px; justify-content: center; align-items: center; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--ink-dim);
+    font-size: 0.75rem;
+    background: var(--bg-3);
+  }
+  .footer-logo {
+    font-family: 'DM Serif Display', serif;
+    color: var(--gold);
+    font-size: 1rem;
+  }
+  .footer-logo span { color: var(--ink-dim); font-size: 0.75rem; font-family: 'Noto Sans KR'; margin-left: 12px; }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ─── KEYFRAMES ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    section { padding: 80px 24px; }
+    #hero { padding: 120px 24px 80px; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .product-top { grid-template-columns: 1fr; gap: 40px; }
+    .type-grid { grid-template-columns: repeat(2, 1fr); }
+    .app-split { grid-template-columns: 1fr; }
+    .trust-grid { grid-template-columns: 1fr; }
+    .teacher-split { grid-template-columns: 1fr; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SF<span> English</span></div>
+  <a href="http://pf.kakao.com/_xoxlxdZX" class="nav-cta" target="_blank">구매 문의 →</a>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-kicker">SF English · 2026학년도 3월 고1 모의고사</div>
+    <h1 class="hero-title">
+      변형문제,<br>
+      이제 <em>만드는</em> 게 아니라<br>
+      <em>뽑는</em> 겁니다
+    </h1>
+    <p class="hero-sub">
+      최근 5개년 기출 데이터 분석 기반 203문항 —<br>
+      Word · PDF · 출제 앱 한 세트로.<br>
+      지문 선택부터 인쇄까지 30초면 끝납니다.
+    </p>
+    <div class="hero-actions">
+      <a href="http://pf.kakao.com/_xoxlxdZX" class="btn-primary" target="_blank">
+        카카오로 구매 문의 &nbsp;→
+      </a>
+      <a href="https://docs.google.com/document/d/1NVOHNANfChqWuhlLiFOr47OuwOtxmwFy/edit?usp=sharing&ouid=104556120314050750894&rtpof=true&sd=true" class="btn-secondary" target="_blank">
+        무료 50문항 받기 ↗
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">203</div>
+        <div class="stat-label">총 문항 수</div>
+      </div>
+      <div>
+        <div class="stat-num">~20년</div>
+        <div class="stat-label">현장 강의 노하우</div>
+      </div>
+      <div>
+        <div class="stat-num">5개년</div>
+        <div class="stat-label">기출 데이터 분석</div>
+      </div>
+      <div>
+        <div class="stat-num">30초</div>
+        <div class="stat-label">지문 선택 → 인쇄</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAIN POINTS -->
+<div style="max-width:100%; border-top: 1px solid var(--border);">
+<section id="pain" style="max-width:100%; padding: 120px 60px;">
+  <div style="max-width:1200px; margin:0 auto;">
+  <div class="section-label">Common Concerns</div>
+  <h2 class="heading reveal">수업 준비, 이런 상황 겪어보셨나요?</h2>
+  <p class="sub reveal">변형문제 시장의 현실 — 선생님들이 공통으로 호소하는 세 가지 불편함</p>
+  <div class="pain-grid reveal">
+    <div class="pain-item">
+      <p class="pain-q">PDF 파일을 받았는데, 원하는 지문만 골라서 쓸 수가 없어요</p>
+      <p class="pain-desc">유형별로 모아서 쓰고 싶은데, 파일 구조가 고정돼 있어서 그대로 복사해서 다시 만들어야 해요. 문제 수정은 꿈도 못 꾸고요.</p>
+    </div>
+    <div class="pain-item">
+      <p class="pain-q">어법·어휘 문제가 시중 상품들은 퀄리티가 너무 낮아요</p>
+      <p class="pain-desc">KILLER 표시는 있는데 실제로는 학생들이 금방 풀어버려요. 수능 출제 패턴을 제대로 반영한 문제를 찾기가 어렵습니다.</p>
+    </div>
+    <div class="pain-item">
+      <p class="pain-q">번호별로 쓸지, 유형별로 쓸지 — 매번 파일을 따로 구입해야 해요</p>
+      <p class="pain-desc">같은 문제인데 번호별·유형별 구성이 다르다는 이유로 각각 구매해야 하는 구조. 한 번 구입으로 다 쓸 수 있어야 하지 않나요?</p>
+    </div>
+  </div>
+  </div>
+</section>
+</div>
+
+<!-- PRODUCT -->
+<div id="product">
+  <div class="inner">
+    <div class="section-label reveal">Package Contents</div>
+    <div class="product-top">
+      <div>
+        <h2 class="product-heading reveal">
+          한 세트 안에<br><span>모든 것이 담겼습니다</span>
+        </h2>
+      </div>
+      <div>
+        <p class="product-desc reveal">
+          20~42번 전 지문 18개, 문항당 9가지 유형 — 주제·제목·함축·빈칸·어휘·어법·순서·삽입·요약에
+          서술형(보기형+본문찾기형)까지 포함합니다. 번호별 파일과 유형별 파일을 모두 제공하며,
+          출제 앱으로 원하는 구성을 30초 안에 뽑아낼 수 있습니다.
+        </p>
+      </div>
+    </div>
+    <div class="type-grid reveal">
+      <div class="type-card">
+        <div class="type-name">주제</div>
+        <div class="type-sub">18지문 × 1문항</div>
+      </div>
+      <div class="type-card">
+        <div class="type-name">제목</div>
+        <div class="type-sub">18지문 × 1문항</div>
+      </div>
+      <div class="type-card">
+        <div class="type-name">함축</div>
+        <div class="type-sub">8지문 선별</div>
+      </div>
+      <div class="type-card killer">
+        <div class="type-badge">KILLER</div>
+        <div class="type-name">빈칸</div>
+        <div class="type-sub">하+중 세트</div>
+      </div>
+      <div class="type-card killer">
+        <div class="type-badge">KILLER</div>
+        <div class="type-name">어휘</div>
+        <div class="type-sub">5지선다 반의어형</div>
+      </div>
+      <div class="type-card">
+        <div class="type-name">어법</div>
+        <div class="type-sub">25회 기출 패턴</div>
+      </div>
+      <div class="type-card">
+        <div class="type-name">순서·삽입</div>
+        <div class="type-sub">논리 단절 기반</div>
+      </div>
+      <div class="type-card killer">
+        <div class="type-badge">KILLER</div>
+        <div class="type-name">요약</div>
+        <div class="type-sub">핵심 빈칸 구조</div>
+      </div>
+    </div>
+    <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
+      <div class="type-card" style="flex:1; min-width:200px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
+        <div style="color:var(--gold); font-size:1.5rem;">📄</div>
+        <div>
+          <div class="type-name" style="text-align:left;">서술형 세트 1</div>
+          <div class="type-sub" style="text-align:left;">보기 선택형 · 18문항</div>
+        </div>
+      </div>
+      <div class="type-card" style="flex:1; min-width:200px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
+        <div style="color:var(--gold); font-size:1.5rem;">📝</div>
+        <div>
+          <div class="type-name" style="text-align:left;">서술형 세트 2</div>
+          <div class="type-sub" style="text-align:left;">본문 찾기형 · 18문항</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHOWCASE -->
+<section id="app">
+  <div class="section-label reveal">SF Exam Builder</div>
+  <div class="app-split">
+    <div>
+      <h2 class="app-heading reveal">출제 앱이 포함됩니다<br><span>설치 없이, 더블클릭 하나로</span></h2>
+      <p class="app-desc reveal">
+        HTML 파일 하나를 더블클릭하면 브라우저에서 바로 열립니다.
+        인터넷도, 로그인도 필요 없습니다.
+        원하는 지문과 유형을 클릭하고 '문제지 생성' 버튼 하나로 끝.
+        정답 일람표와 해설이 자동으로 붙어서 나옵니다.
+      </p>
+      <div class="app-steps reveal">
+        <div class="app-step">
+          <div class="step-num">01</div>
+          <div class="step-text"><strong>학년·시험 선택</strong> — 고1 · 2026 · 3월 클릭</div>
+        </div>
+        <div class="app-step">
+          <div class="step-num">02</div>
+          <div class="step-text"><strong>지문 선택</strong> — 20번~42번 원하는 번호 체크 (전체 선택 가능)</div>
+        </div>
+        <div class="app-step">
+          <div class="step-num">03</div>
+          <div class="step-text"><strong>유형 필터</strong> — 빈칸만, 어법만, 순서+삽입만 등 자유롭게</div>
+        </div>
+        <div class="app-step">
+          <div class="step-num">04</div>
+          <div class="step-text"><strong>출제 방식 선택</strong> — 번호별 / 유형별 / 랜덤 믹스</div>
+        </div>
+        <div class="app-step">
+          <div class="step-num">05</div>
+          <div class="step-text"><strong>Ctrl+P 인쇄</strong> — A4 2단, 정답 일람표·해설 자동 포함</div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="app-mockup">
+        <div class="mockup-bar">
+          <div class="mockup-dot" style="background:#ff5f57;"></div>
+          <div class="mockup-dot" style="background:#febc2e;"></div>
+          <div class="mockup-dot" style="background:#28c840;"></div>
+          <div class="mockup-title">SF Exam Builder — sf_exam_builder.html</div>
+        </div>
+
+        <div class="mockup-step-row">
+          <div class="mockup-step-label">STEP 1</div>
+          <div class="mockup-chips">
+            <div class="chip active">고1</div>
+            <div class="chip default">고2</div>
+            <div class="chip active">2026</div>
+            <div class="chip active">3월</div>
+          </div>
+        </div>
+
+        <div class="mockup-step-row" style="margin-top:16px;">
+          <div class="mockup-step-label">지문 선택</div>
+        </div>
+        <div class="mockup-passage-grid">
+          <div class="psg-btn">20번<span>5문항</span></div>
+          <div class="psg-btn">21번<span>5문항</span></div>
+          <div class="psg-btn off">22번<span>5문항</span></div>
+          <div class="psg-btn">24번<span>5문항</span></div>
+          <div class="psg-btn">29번<span>5문항</span></div>
+          <div class="psg-btn">30번<span>5문항</span></div>
+          <div class="psg-btn off">31번<span>5문항</span></div>
+          <div class="psg-btn">32번<span>5문항</span></div>
+          <div class="psg-btn">33번<span>5문항</span></div>
+          <div class="psg-btn off">34번<span>5문항</span></div>
+        </div>
+
+        <div class="mockup-step-row">
+          <div class="mockup-step-label">유형 선택</div>
+          <div class="mockup-chips">
+            <div class="chip default">주제</div>
+            <div class="chip active">빈칸</div>
+            <div class="chip active">어휘</div>
+            <div class="chip default">어법</div>
+            <div class="chip active">요약</div>
+          </div>
+        </div>
+
+        <button class="mockup-generate">문제지 생성 →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section id="trust" style="max-width:100%; padding:120px 60px;">
+  <div style="max-width:1200px; margin:0 auto;">
+  <div class="section-label reveal">Why Trust Us</div>
+  <h2 style="font-family:'Noto Serif KR',serif; font-size:clamp(1.8rem,2.8vw,2.4rem); font-weight:700; max-width:600px; line-height:1.3;" class="reveal">
+    문제 수가 많은 게 아니라<br>좋은 문제만 남긴 패키지입니다
+  </h2>
+  <div class="trust-grid reveal">
+    <div class="trust-item">
+      <div class="trust-num">5개년</div>
+      <div class="trust-title">기출 데이터 분석</div>
+      <div class="trust-desc">최근 5개년 수능·모평·학평 기출을 분석해 어법·어휘·빈칸 출제 패턴을 데이터화했습니다. 감각이 아닌 근거로 설계한 문제입니다.</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-num">~20년</div>
+      <div class="trust-title">현장 강의 노하우</div>
+      <div class="trust-desc">약 20년의 현장 강의 경험, 기출 데이터 분석, AI 3중 검수가 결합된 결과물입니다. 학생이 실제로 어디서 틀리는지를 아는 강사가 만든 문제입니다.</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-num">3-AI</div>
+      <div class="trust-title">검수 프로세스</div>
+      <div class="trust-desc">Claude · GPT · Gemini가 독립적으로 블라인드 검수합니다. 22개 항목 체크리스트로 논리 오류·범위 이탈·오답 중의성을 전수 검증합니다.</div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="compare">
+  <div class="section-label reveal">Comparison</div>
+  <h2 class="compare-heading reveal">다른 변형문제 패키지와 뭐가 다른가요</h2>
+  <p class="compare-sub reveal">시중 변형문제 패키지 대비 SF English의 차별점</p>
+  <div class="reveal">
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>비교 항목</th>
+        <th>일반 변형문제</th>
+        <th>SF English</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>원하는 지문만 골라서 출제</td>
+        <td><span class="cross">✗ 불가 (PDF 고정)</span></td>
+        <td><span class="gold-check">✓ 클릭 1번</span></td>
+      </tr>
+      <tr>
+        <td>번호별 + 유형별 모두 제공</td>
+        <td><span class="cross">✗ 각각 별도 구매</span></td>
+        <td><span class="gold-check">✓ 한 세트에 포함</span></td>
+      </tr>
+      <tr>
+        <td>서술형 세트 포함</td>
+        <td><span class="cross">✗ 미포함</span></td>
+        <td><span class="gold-check">✓ 보기형 + 본문찾기형</span></td>
+      </tr>
+      <tr>
+        <td>기출 데이터 기반 출제</td>
+        <td><span class="cross">✗ 패턴 불명확</span></td>
+        <td><span class="gold-check">✓ 25회 분석 데이터</span></td>
+      </tr>
+      <tr>
+        <td>정답 일람표 + 해설 자동 포함</td>
+        <td><span class="cross">✗ 별도 파일</span></td>
+        <td><span class="gold-check">✓ 인쇄 시 자동 삽입</span></td>
+      </tr>
+      <tr>
+        <td>KILLER 문항 별도 표시</td>
+        <td><span class="cross">✗ 없거나 불명확</span></td>
+        <td><span class="gold-check">✓ 전 문항 난이도 표기</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- TEACHER -->
+<section id="teacher">
+  <div class="section-label reveal">About</div>
+  <div class="teacher-split reveal">
+    <div class="teacher-card">
+      <div class="teacher-img">🎓</div>
+      <div class="teacher-info">
+        <div class="teacher-name">SF English</div>
+        <div class="teacher-role">INSTRUCTOR</div>
+        <div>
+          <span class="teacher-tag">한국외대 졸업</span>
+          <span class="teacher-tag">현장 강의 약 20년</span>
+          <span class="teacher-tag">사당·방배</span>
+          <span class="teacher-tag">고1·고2 전문</span>
+          <span class="teacher-tag">S&F 교수법</span>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-content">
+      <h2 class="heading">직접 만들어보니<br>시중에 없는 게 맞았습니다</h2>
+      <p>약 20년의 강의 현장에서 변형문제 자료를 찾고, 구매하고, 수정하는 일을 반복해 왔습니다. 퀄리티가 아쉬운 게 항상 있었어요. 어법 포인트가 실제 기출과 다르거나, 어휘 오답이 너무 쉽거나, 원하는 지문만 뽑을 수가 없거나.</p>
+      <p>그래서 직접 만들기로 했습니다. 수능·학평 25회를 데이터로 분석하고, 3개 AI 교차 검수 프로세스를 설계해서, 현장에서 실제로 쓸 수 있는 수준의 패키지를 만들었습니다.</p>
+      <p>같은 고민을 가진 선생님들께 바로 쓸 수 있는 형태로 드리고 싶습니다.</p>
+      <div class="highlight-box">
+        <p><strong>"문제 수가 많은 게 아니라 좋은 문제만 남기는 것"</strong> — 이것이 SF English 변형문제 패키지의 출제 철학입니다. KILLER 문항의 오답은 25회 기출 패턴을 반영한 Partial Truth-A/B와 Opposite Logic 3종으로만 설계합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-label reveal" style="justify-content:center;">Pricing</div>
+  <h2 class="heading reveal">지금 바로 시작하세요</h2>
+  <p class="sub reveal">번호별 + 유형별 + 출제 앱, 한 번 구입으로 전부 사용하실 수 있습니다</p>
+  <div class="pricing-card reveal">
+    <div class="pricing-badge">SF ENGLISH · FULL PACKAGE</div>
+    <div class="pricing-price">
+      <sup>₩</sup>19,900<sub>/세트</sub>
+    </div>
+    <p class="pricing-note">부가세 포함 · 영구 사용 · 수업 활용 가능</p>
+    <div class="pricing-includes">
+      <div class="include-item">
+        <span class="icon">✦</span>
+        <span><strong>203문항 Word + PDF (번호별)</strong> — 20~42번, 9유형 전체</span>
+      </div>
+      <div class="include-item">
+        <span class="icon">✦</span>
+        <span><strong>203문항 Word + PDF (유형별)</strong> — 유형 중심 재편집본</span>
+      </div>
+      <div class="include-item">
+        <span class="icon">✦</span>
+        <span><strong>SF Exam Builder (HTML 앱)</strong> — 지문 선택 → 30초 출제</span>
+      </div>
+      <div class="include-item">
+        <span class="icon">✦</span>
+        <span><strong>서술형 세트 1·2</strong> — 보기형 + 본문찾기형 각 18문항</span>
+      </div>
+      <div class="include-item">
+        <span class="icon">✦</span>
+        <span><strong>문항별 해설 포함</strong> — 정답 근거 + 오답 풀이</span>
+      </div>
+    </div>
+    <a href="http://pf.kakao.com/_xoxlxdZX" class="pricing-cta" target="_blank">카카오로 구매 문의하기 →</a>
+    <p class="pricing-note" style="margin-top:12px; color:var(--gold); font-size:0.8rem;">크몽 승인 완료 후 바로 구매 가능 예정</p>
+    <p class="pricing-free">
+      먼저 써보고 싶으시면 →&nbsp;
+      <a href="https://docs.google.com/document/d/1NVOHNANfChqWuhlLiFOr47OuwOtxmwFy/edit?usp=sharing&ouid=104556120314050750894&rtpof=true&sd=true" target="_blank">무료 50문항 다운로드</a>
+    </p>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<div id="cta-final">
+  <div class="section-label reveal" style="justify-content:center;">Get Started</div>
+  <h2 class="heading reveal">
+    다음 수업, 변형문제 준비에<br>30초면 충분합니다
+  </h2>
+  <p class="sub reveal">
+    PDF 파일 열고, 유형별로 나눠서 복붙하고, 정답표 따로 만들던 시간 —<br>이제는 클릭 몇 번으로 끝냅니다.
+  </p>
+  <div class="cta-buttons reveal">
+    <a href="http://pf.kakao.com/_xoxlxdZX" class="btn-primary" target="_blank">카카오로 구매 문의 →</a>
+    <a href="https://docs.google.com/document/d/1NVOHNANfChqWuhlLiFOr47OuwOtxmwFy/edit?usp=sharing&ouid=104556120314050750894&rtpof=true&sd=true" class="btn-secondary" target="_blank">무료 샘플 먼저 받기 ↗</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">SF English<span>사당·방배</span></div>
+    <div style="margin-top:8px; font-size:0.7rem; color:var(--white-dim);">카카오채널: sfenglish &nbsp;|&nbsp; 010-2937-7123</div>
+  </div>
+  <div style="text-align:right;">
+    <div>© 2026 SF English. All rights reserved.</div>
+    <div style="margin-top:4px; color:rgba(245,243,239,0.3);">본 자료의 저작권은 SF English에 귀속됩니다</div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // Stagger reveal children
+  document.querySelectorAll('.pain-grid, .type-grid, .trust-grid').forEach(grid => {
+    const items = grid.children;
+    Array.from(items).forEach((item, i) => {
+      item.style.transitionDelay = `${i * 0.1}s`;
+    });
+  });
+
+  // Mockup interactivity
+  document.querySelectorAll('.psg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('off');
+    });
+  });
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('active');
+      chip.classList.toggle('default');
+    });
+  });
+</script>
+</body>
+</html>
