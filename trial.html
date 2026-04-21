@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SF Exam Builder — 체험판 (Trial)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif}
+
+/* ── 공지사항 배너 ── */
+.notice{background:linear-gradient(135deg,#1B3668 0%,#2a4f96 100%);color:#fff;padding:14px 24px;font-size:12px;line-height:1.7}
+.notice-title{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.notice-dot{width:7px;height:7px;border-radius:50%;background:#FFD700;flex-shrink:0}
+.notice-list{list-style:none;padding:0}
+.notice-list li{padding:2px 0 2px 14px;position:relative;color:rgba(255,255,255,.9)}
+.notice-list li::before{content:'•';position:absolute;left:0;color:#FFD700}
+.notice-list li strong{color:#fff}
+.notice-list li.done::before{content:'✅';font-size:10px}
+.notice-list li.soon::before{content:'🔜';font-size:10px}
+
+/* ── 설정 화면 ── */
+.setup-screen{min-height:100vh;background:#f0f4f8}
+.nav{background:#1B3668;padding:13px 24px;display:flex;align-items:baseline;gap:10px}
+.nav-brand{color:#fff;font-size:16px;font-weight:500}
+.nav-sub{color:#93B4D8;font-size:12px}
+.main{max-width:560px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:12px}
+.card{background:#fff;border-radius:16px;border:1px solid #dde3ed;padding:18px 20px}
+.step-label{font-size:10px;font-weight:500;color:#1B3668;text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.row:last-child{margin-bottom:0}
+.row-label{font-size:12px;color:#666;width:28px;flex-shrink:0}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:500;border:2px solid #C8D6E8;background:#f7f9fc;color:#333;cursor:pointer;transition:all .15s;font-family:inherit}
+.pill:hover:not(.off){border-color:#1B3668;color:#1B3668;background:#EBF2FA}
+.pill.active{background:#1B3668;color:#fff;border-color:#1B3668}
+.pill.off{opacity:.3;cursor:not-allowed}
+.status-row{font-size:12px;color:#666;margin-top:10px;padding:8px 10px;background:#f7f9fc;border-radius:8px;min-height:36px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.status-badge{display:inline-block;padding:2px 8px;border-radius:10px;background:#1B3668;color:#fff;font-size:11px;font-weight:500}
+.q-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.q-btn{padding:10px 4px;border-radius:10px;border:2px solid #dde3ed;background:#f7f9fc;color:#333;cursor:pointer;font-size:12px;font-weight:500;text-align:center;transition:all .15s;font-family:inherit}
+.q-btn .sub{font-size:10px;color:#888;margin-top:2px;font-weight:400}
+.q-btn:hover:not(.off){border-color:#1B3668;color:#1B3668}
+.q-btn.active{background:#1B3668;color:#fff;border-color:#1B3668}
+.q-btn.active .sub{color:rgba(255,255,255,.65)}
+.q-btn.off{opacity:.35;cursor:not-allowed}
+.mini-btn{padding:5px 12px;font-size:11px;border-radius:8px;border:1px solid #dde3ed;background:#f7f9fc;color:#666;cursor:pointer;font-family:inherit}
+.mini-btn:hover{border-color:#1B3668;color:#1B3668}
+.btn-row2{display:flex;gap:8px;margin-bottom:12px}
+.summary{margin-top:10px;padding:10px 14px;background:#EBF2FA;border-radius:8px;font-size:13px;color:#1B3668}
+.type-filter{margin-top:12px;padding-top:12px;border-top:1px solid #eef1f6}
+.tf-title{font-size:11px;color:#888;margin-bottom:8px}
+.type-pills{display:flex;gap:5px;flex-wrap:wrap}
+.type-pill{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:500;border:1.5px solid #C8D6E8;background:#f7f9fc;color:#555;cursor:pointer;font-family:inherit;transition:all .12s}
+.type-pill:hover{border-color:#1B3668;color:#1B3668}
+.type-pill.active{background:#1B3668;color:#fff;border-color:#1B3668}
+.mode-section{margin-top:12px;padding-top:12px;border-top:1px solid #eef1f6}
+.mode-btns{display:flex;flex-direction:column;gap:6px}
+.mode-btn{padding:9px 14px;border-radius:10px;border:2px solid #dde3ed;background:#f7f9fc;color:#333;cursor:pointer;font-size:12px;font-weight:500;text-align:left;font-family:inherit;transition:all .15s;line-height:1.4}
+.mode-btn .msub{font-size:10px;color:#888;font-weight:400;display:block;margin-top:2px}
+.mode-btn:hover{border-color:#1B3668;color:#1B3668;background:#EBF2FA}
+.mode-btn.active{background:#1B3668;color:#fff;border-color:#1B3668}
+.mode-btn.active .msub{color:rgba(255,255,255,.7)}
+.gen-btn{width:100%;padding:15px;border-radius:14px;background:#1B3668;color:#fff;font-size:15px;font-weight:500;border:none;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.gen-btn:hover:not(:disabled){opacity:.88}
+.gen-btn:disabled{background:#dde3ed;color:#999;cursor:not-allowed}
+
+/* ── 프리뷰 ── */
+.preview-screen{display:none;min-height:100vh;background:#666}
+.preview-bar{position:sticky;top:0;z-index:20;background:#444;padding:8px 16px;display:flex;align-items:center;gap:10px}
+.back-btn{font-size:12px;color:#ddd;cursor:pointer;border:1px solid #888;background:transparent;font-family:inherit;padding:4px 10px;border-radius:5px}
+.back-btn:hover{background:#555}
+.pv-info{font-size:11px;color:#bbb;flex:1}
+
+.print-btn{padding:6px 14px;background:#1B3668;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+
+/* ── A4 페이지 (화면 = 프린트) ── */
+.page-wrap{padding:16px;display:flex;flex-direction:column;gap:16px;align-items:center}
+
+.page{
+  width:794px;
+  background:#fff;
+  box-shadow:0 2px 10px rgba(0,0,0,.35);
+  /* overflow:hidden 제거 — 프린트 시 잘림 방지 */
+}
+
+/* 헤더: 첫 페이지만 완전판, 이후 페이지는 간소화 */
+.page-hd{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 20px 7px;
+  border-bottom:2.5px solid #1B3668;
+}
+.page-hd-title{font-size:13px;font-weight:700;color:#1B3668}
+.page-hd-meta{font-size:11px;color:#555;text-align:right;line-height:1.5}
+
+/* 2단 Flex 레이아웃 — 화면과 프린트 동일 */
+.page-body{
+  display:flex;
+  align-items:flex-start;
+  padding:10px 0 12px;
+}
+.col{
+  flex:1;
+  padding:0 16px;
+  min-width:0;        /* flex 자식 overflow 방지 */
+}
+.col-div{
+  width:1px;
+  background:#d0d8e8;
+  align-self:stretch;
+  flex-shrink:0;
+}
+
+/* ── 문항 블록 ── */
+.q-full{
+  padding-bottom:10px;
+  margin-bottom:16px;   /* 화면: 문제 간 여백 */
+  border-bottom:1px dashed #d0d8e8;
+}
+.q-full:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+
+/* 섹션 헤더 (유형별) */
+.sec-hd{
+  font-size:10.5px;font-weight:700;color:#fff;
+  background:#1B3668;padding:3px 10px;border-radius:4px;
+  margin:0 0 8px;
+}
+
+/* 정답표 */
+.ans-section{
+  padding:8px 20px 12px;
+  border-top:1.5px solid #c8d0e0;
+}
+.ans-title{font-size:10.5px;font-weight:600;color:#1B3668;margin-bottom:5px}
+.ans-wrap{display:flex;flex-wrap:wrap;gap:3px}
+.ans-cell{display:flex;align-items:center;gap:2px;background:#f7f9fc;border:1px solid #d0d8e8;border-radius:4px;padding:2px 7px;font-size:10.5px}
+.ans-num{color:#888;font-weight:500}
+.ans-val{color:#1B3668;font-weight:600}
+
+/* ── 문항 내부 ── */
+.q-hd{display:flex;align-items:flex-start;gap:5px;margin-bottom:5px}
+.q-n{font-weight:700;font-size:12.5px;min-width:18px;color:#1B3668;flex-shrink:0}
+.q-stem{font-size:11px;color:#222;flex:1;line-height:1.4;font-weight:500}
+
+.p-text{font-size:10.5px;line-height:1.68;color:#222;background:#f8f9fc;padding:6px 10px;border-left:2.5px solid #1B3668;border-radius:0 5px 5px 0;margin-bottom:6px}
+.p-text u{text-decoration:underline;text-underline-offset:2px}
+.blank{background:#fff3b0;padding:0 2px;border-radius:2px;font-weight:600}
+.mkr{color:#1B3668;font-weight:700;white-space:nowrap}
+.irrel-n{color:#1B3668;font-weight:700}
+.p-fn{font-size:9.5px;color:#999;margin-top:-2px;margin-bottom:5px}
+
+.given-box{font-size:10.5px;line-height:1.68;color:#222;background:#fff;border:1.5px solid #1B3668;border-radius:5px;padding:6px 10px;margin-bottom:6px}
+.seq-blocks{margin-bottom:6px}
+.seq-block{margin-bottom:5px;font-size:10.5px;line-height:1.68;color:#222}
+.seq-label{font-weight:700;color:#1B3668;margin-right:4px}
+.s-sum{background:#fff8f0;border-left:2.5px solid #C9A84C;line-height:1.75;}
+.blank-key{color:#1B3668;font-size:11px;letter-spacing:.02em;}
+.s-opts-wrap{margin:5px 0 4px;font-size:10.5px;line-height:1.8;}
+.s-opts-label{font-weight:700;color:#1B3668;margin-right:6px;}
+.s-opt{display:inline-block;background:#eef2ff;border:1px solid #c8d4f0;border-radius:4px;padding:1px 7px;margin:2px 3px 2px 0;color:#1B3668;font-size:10px;}
+.s-ans{font-size:10px;color:#888;margin-top:4px;padding-top:4px;border-top:1px dashed #dde1ea;}
+.sum-box{font-size:10px;color:#222;margin:4px 0 5px;padding:5px 9px;border-left:2px solid #1B3668;background:#f0f4f8;border-radius:0 4px 4px 0;line-height:1.6}
+
+/* 보기 간격 개선 */
+.q-opts{margin-top:5px}
+.q-opt{font-size:9.5px;color:#222;margin-bottom:3px;line-height:1.38}
+.pn-tag{font-size:9px;color:#888;font-weight:400;white-space:nowrap}
+
+/* ── 측정용 숨김 컨테이너 ── */
+.measurer{
+  position:absolute;left:-9999px;top:0;
+  width:357px;   /* 컬럼 폭: (794 - 2*16 margin - 1 divider) / 2 ≈ 357 */
+  visibility:hidden;
+}
+
+/* ── 인쇄 / PDF ── */
+@media print{
+  .setup-screen{display:none!important}
+  .preview-screen{display:block!important;background:none!important}
+  .preview-bar{display:none!important}
+  .page-wrap{padding:0;gap:0;background:none}
+
+  /* page-break-after 제거 → break-before:page로 교체
+     이유: after는 overflow 콘텐츠와 충돌해 빈 페이지 생성
+     before는 각 .page div가 새 인쇄 페이지에서 시작함을 보장 */
+  .page{
+    width:100%;box-shadow:none;
+    break-before:page;page-break-before:always;
+  }
+  .page:first-child{break-before:auto;page-break-before:auto}
+
+  /* 인쇄 전용 문항 여백 — 학원 시험지 수준 */
+  .q-full{
+    margin-bottom:26px;
+    padding-bottom:10px;
+    page-break-inside:avoid;
+    break-inside:avoid;
+  }
+  .q-full:last-child{margin-bottom:0;padding-bottom:0}
+  .p-text{page-break-inside:avoid;break-inside:avoid;margin-bottom:8px}
+  .q-opt{margin-bottom:4px}
+  .given-box{page-break-inside:avoid;break-inside:avoid}
+  .seq-blocks{page-break-inside:avoid;break-inside:avoid}
+  .ans-section{page-break-inside:avoid;break-inside:avoid}
+
+  @page{margin:10mm 8mm;size:A4}
+
+  /* ── [체험판] 인쇄 시 모든 내용 숨기고 차단 메시지만 표시 ── */
+  body::before{
+    content:"🔒 체험판은 인쇄 · PDF 저장이 불가합니다.  정식 패키지 구매 후 이용 가능합니다.  (SF English · 010-2937-7123)";
+    display:block !important;
+    position:fixed;inset:0;
+    background:#fff;color:#1B3668;
+    font-size:14pt;font-weight:bold;
+    padding:80pt 40pt;
+    text-align:center;
+    z-index:999999;
+    white-space:pre-wrap;
+    line-height:2;
+  }
+  body>*{display:none !important;visibility:hidden !important}
+}
+</style>
+</head>
+<body>
+
+<!-- [체험판] 상단 배지 -->
+<div id="trial-banner" style="position:sticky;top:0;z-index:1000;background:linear-gradient(90deg,#1B3668,#2a4d8f);color:#fff;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:'Noto Sans KR',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.12)">
+  <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+    <span style="background:#C9A961;color:#1B3668;padding:3px 9px;border-radius:3px;font-size:11px;font-weight:700;letter-spacing:0.5px;white-space:nowrap">체험판 TRIAL</span>
+    <span style="font-size:13px;line-height:1.4;opacity:0.95">지문 <strong style="color:#F5D98E">2개 · 23문항</strong>만 제공 · 정답 · 인쇄 · 다운로드는 <strong>구매 시</strong> 이용 가능</span>
+  </div>
+  <button onclick="goToPurchase()" style="background:#C9A961;color:#1B3668;border:none;padding:7px 14px;border-radius:3px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit">전체 패키지 보기 →</button>
+</div>
+
+<!-- 설정 화면 -->
+<div class="setup-screen" id="setupScreen">
+  <div class="nav">
+    <span class="nav-brand">SF Exam Builder</span>
+    <span class="nav-sub">변형문제 출제 시스템</span>
+  </div>
+
+  <!-- 공지사항 -->
+  <div class="notice">
+    <div class="notice-title"><span class="notice-dot"></span>체험판 안내 — 정식 패키지와의 차이</div>
+    <ul class="notice-list">
+      <li><strong>체험판 제공:</strong> 20번·21번 지문 2개 · 23문항 (앱의 출제 기능 체험용)</li>
+      <li><strong>정식 패키지 제공:</strong> 전 지문 18개 · <strong>203문항 + 정답 · 해설</strong></li>
+      <li><strong>체험판 제한:</strong> 정답 비공개 · 인쇄 · PDF · Word · 한글 파일 다운로드 불가</li>
+      <li class="soon">정식 구매 시 PDF · Word · 한글(HWP) 파일 모두 제공 · 자유 편집 가능</li>
+    </ul>
+  </div>
+  <div class="main">
+    <div class="card">
+      <div class="step-label">STEP 1 · 시험 선택</div>
+      <div class="row"><span class="row-label">학년</span><div class="pills" id="g-pills"></div></div>
+      <div class="row"><span class="row-label">년도</span><div class="pills" id="y-pills"></div></div>
+      <div class="row"><span class="row-label">월</span><div class="pills" id="m-pills"></div></div>
+      <div class="status-row" id="status-row">👆 학년을 먼저 선택해 주세요.</div>
+    </div>
+    <div class="card" id="step3" style="display:none">
+      <div class="step-label">STEP 3 · 지문 선택</div>
+      <div class="btn-row2">
+        <button class="mini-btn" id="all-btn">전체 선택</button>
+        <button class="mini-btn" id="clr-btn">초기화</button>
+      </div>
+      <div class="q-grid" id="q-grid"></div>
+      <div class="type-filter">
+        <div class="tf-title">유형 선택 (전체 선택이 기본, 최소 1개 유지)</div>
+        <div class="type-pills" id="type-pills"></div>
+      </div>
+      <div class="mode-section">
+        <div class="tf-title" style="margin-bottom:8px">출제 방식</div>
+        <div class="mode-btns" id="mode-btns"></div>
+      </div>
+      <div id="q-summary" style="display:none" class="summary"></div>
+    </div>
+    <button class="gen-btn" id="gen-btn" disabled>문제지 생성 →</button>
+  </div>
+</div>
+
+<!-- 프리뷰 화면 -->
+<div class="preview-screen" id="previewScreen">
+  <div class="preview-bar">
+    <button class="back-btn" id="back-btn">← 돌아가기</button>
+    <span class="pv-info" id="pv-info"></span>
+
+    <button class="print-btn" onclick="showTrialLock('print')" style="opacity:0.55;cursor:not-allowed">🔒 인쇄 / PDF</button>
+    <span style="font-size:10px;color:#bbb;line-height:1.3">체험판은<br>인쇄 불가</span>
+  </div>
+  <div class="page-wrap" id="pageWrap"></div>
+</div>
+
+<!-- 높이 측정용 숨김 컨테이너 -->
+<div class="measurer" id="measurer"></div>
+
+<script>
+const DB={"고1|2026|3": {"label": "2026학년도 3월 고1", "allNums": [20, 21], "ready": [20, 21], "passages": {"20": {"fn": "* authentically: 진정성 있게  ** self-deprecating: 자기 비하의", "qs": [{"id": "20-1", "type": "주제", "stem": "다음 글의 주제로 가장 적절한 것은?", "psg": "There is simply no better way to influence or stir an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote. To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments. By sharing a revealing story or a personal flaw, you allow audience members a way to identify with you.", "opts": ["the importance of professional expertise in gaining audience trust", "why long personal stories are the most effective tool in public speaking", "the power of personal storytelling in connecting with and persuading an audience", "the role of speech coaches in helping speakers improve their delivery", "techniques for analyzing audience needs before giving a speech"], "ans": 2, "exp": "이 글의 핵심은 개인적인 이야기를 청중과 공유하면 유대감이 생기고, 그것이 설득의 토대가 된다는 것입니다. ③이 이 내용을 가장 잘 담고 있습니다. ①은 전문 지식 이야기인데, 글에서는 오히려 논거보다 사람과의 연결이 중요하다고 했습니다. ②는 긴 개인 이야기가 최고라는 뜻인데, 글에서는 짧은 세부사항·감정·자기비하 농담으로도 충분하다고 했습니다."}, {"id": "20-2", "type": "제목", "stem": "다음 글의 제목으로 가장 적절한 것은?", "psg": "There is simply no better way to influence or stir an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote. To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments. By sharing a revealing story or a personal flaw, you allow audience members a way to identify with you.", "opts": ["Why Logic Alone Will Never Move a Crowd", "The Art of Keeping Your Personal Life Off the Stage", "Win Over Your Audience: Let Your Story Build the Bridge", "Know Your Audience Before You Tell Your Story", "Less Is More: The Secret to a Powerful Speech"], "ans": 2, "exp": "글의 핵심 메시지는 \"이야기로 청중과 다리를 놓아라\"입니다. ③ \"이야기로 청중을 사로잡아라: 이야기가 다리를 놓는다\"가 이 내용을 가장 잘 표현합니다. ①은 논리만으로는 안 된다는 뜻인데, 글의 주인공은 \"왜 안 되는가\"가 아니라 \"어떻게 해야 하는가\"입니다. ②는 개인 이야기를 무대에서 숨기라는 뜻으로, 글의 방향과 정반대입니다."}, {"id": "20-3", "type": "빈칸", "stem": "다음 빈칸에 들어갈 말로 가장 적절한 것을 고르시오.", "psg": "There is simply no better way to influence or stir an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote. To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments. By sharing a revealing story or a personal flaw, you allow audience members a way to _____ with you.", "opts": ["disagree", "compete", "relate", "argue", "contrast"], "ans": 2, "exp": "빈칸이 있는 문장은 \"청중이 화자와 _____ 할 수 있도록 해준다\"는 내용입니다. 글 전체가 개인 이야기로 청중과 공감대를 형성한다는 이야기이므로, ③ relate(공감하다, 동일시하다)가 딱 맞습니다. 나머지 선택지(disagree/반대하다, compete/경쟁하다, argue/논쟁하다, contrast/대조하다)는 모두 반대 방향입니다."}, {"id": "20-4", "type": "빈칸", "stem": "다음 빈칸에 들어갈 말로 가장 적절한 것을 고르시오. [KILLER]", "psg": "There is simply no better way to _____ an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote. To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments. By sharing a revealing story or a personal flaw, you allow audience members a way to identify with you.", "opts": ["form a deep personal connection with", "impress with your professional credentials", "present well-researched arguments to", "entertain and make laugh with humor", "gather honest feedback from"], "ans": 0, "exp": "빈칸은 청중에게 영향을 주거나 마음을 움직이는 가장 좋은 방법 자리입니다. 글에서는 \"사람들은 논거가 아니라 사람 자체와 유대한다\"고 했으므로, ① \"청중과 깊은 개인적 연결을 형성하다\"가 정답입니다. ② 전문성을 보여주는 것은 글에서 오히려 사람들이 논거와는 유대하지 않는다고 했으므로 반대 방향입니다."}, {"id": "20-5", "type": "어휘", "stem": "다음 글의 밑줄 친 부분 중, 문맥상 낱말의 쓰임이 적절하지 않은 것은? [KILLER]", "psg": "There is simply no better way to influence or stir an audience — instantly, powerfully, ①authentically — than by opening up to them with a personal story or anecdote. To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key ②biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. It is a tried-and-tested way of ③bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a ④vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments. By sharing a revealing story or a personal ⑤achievement, you allow audience members a way to identify with you.", "opts": ["①", "②", "③", "④", "⑤"], "ans": 4, "exp": "글에서는 \"개인적인 결점(flaw)을 공유하면 청중이 공감한다\"고 했습니다. 그런데 ⑤는 flaw(결점) 자리에 achievement(성취)가 들어가 있습니다. 결점을 드러내는 것이 유대의 핵심인데, 성취를 자랑하는 것은 그 흐름에 맞지 않습니다. 정답은 ⑤이며, achievement를 flaw로 고쳐야 합니다."}, {"id": "20-6", "type": "순서", "stem": "주어진 글 다음에 이어질 글의 순서로 가장 적절한 것은?", "given": "There is simply no better way to influence or stir an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote.", "seq": {"A": "It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments.", "B": "By sharing a revealing story or a personal flaw, you allow audience members a way to identify with you.", "C": "To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke."}, "opts": ["(A)–(B)–(C)", "(A)–(C)–(B)", "(C)–(A)–(B)", "(C)–(B)–(A)", "(B)–(A)–(C)"], "ans": 2, "exp": "주어진 문장: 청중을 사로잡는 가장 좋은 방법은 개인 이야기를 여는 것. → (C): 긴 가족 이야기가 아니라 짧은 세부사항·감정·농담이면 충분하다. → (A): 이것이 유대감 형성의 검증된 방법이며, 사람들은 논거가 아닌 사람과 유대한다는 가혹한 현실. → (B): 이야기나 결점을 공유하면 청중이 화자와 동일시한다는 결론. 정답: ③ (C)–(A)–(B)."}, {"id": "20-7", "type": "삽입", "stem": "글의 흐름으로 보아, 주어진 문장이 들어가기에 가장 적절한 곳은?", "given": "The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments.", "psg": "There is simply no better way to influence or stir an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote. ( ① ) To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. ( ② ) I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. ( ③ ) It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. ( ④ ) By sharing a revealing story or a personal flaw, you allow audience members a way to identify with you. ( ⑤ )", "opts": ["①", "②", "③", "④", "⑤"], "ans": 3, "exp": "주어진 문장의 내용은 \"사람들은 논거가 아니라 사람 자체와 유대한다\"는 것입니다. ④ 앞 문장은 \"설득의 토대를 마련한다\"이고, ④ 뒤 문장은 \"이야기나 결점을 공유하면 청중이 동일시한다\"입니다. 주어진 문장이 \"왜 개인 이야기가 설득의 토대가 되는지\" 이유를 설명하므로, ④ 위치가 가장 자연스럽습니다."}, {"id": "20-8", "type": "요약", "stem": "다음 글의 내용을 한 문장으로 요약하려 할 때, 빈칸 (A), (B)에 들어갈 말로 가장 적절한 것은? [KILLER]", "psg": "There is simply no better way to influence or stir an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote. To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments. By sharing a revealing story or a personal flaw, you allow audience members a way to identify with you.", "sum": "Sharing personal stories is the most powerful method for (A)_____ an audience, since people are more likely to (B)_____ with the speaker than with abstract arguments alone.", "opts": ["engaging — connect", "informing — distinguish", "engaging — distinguish", "entertaining — connect", "informing — connect"], "ans": 0, "exp": "요약 문장: \"개인 이야기를 공유하는 것이 청중을 (A)하는 가장 강력한 방법이며, 사람들은 추상적인 논거보다 화자와 (B)할 가능성이 높다.\" (A)에는 청중의 마음을 사로잡는다는 뜻의 engaging(참여시키다)이, (B)에는 유대한다는 뜻의 connect(연결되다)가 들어가야 합니다. ③ engaging/distinguish: (B)의 distinguish(구별하다)는 connect와 반대입니다. ④ entertaining: 글의 핵심은 오락이 아니라 공감과 유대입니다."}, {"id": "20-s1", "type": "서술형1", "stem": "다음 글의 내용을 요약한 문장의 빈칸 (A), (B)에 들어갈 말을 <보기>에서 골라 쓰시오.", "psg": "There is simply no better way to influence or stir an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote. To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments. By sharing a revealing story or a personal flaw, you allow audience members a way to identify with you.", "sum": "Personal narratives are considered the most effective way of (A)_____ listeners, as individuals tend to (B)_____ emotionally with a speaker more than with purely logical reasoning.", "opts": ["engaging", "persuading", "ignoring", "bond", "disconnect", "analyze"], "ans_key": {"A": "engaging", "B": "bond"}}, {"id": "20-s2", "type": "서술형2", "stem": "다음 글의 내용을 요약한 문장의 빈칸에 들어갈 말을 본문에서 찾아 쓰시오. (필요시 형태를 변형할 것)", "psg": "There is simply no better way to influence or stir an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote. To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments. By sharing a revealing story or a personal flaw, you allow audience members a way to identify with you.", "sum": "Sharing personal stories is the most powerful method for (A)_____ an audience, since people are more likely to (B)_____ with the speaker than with abstract arguments alone.", "ans_key": {"A": "stir", "B": "bond"}}, {"id": "20-함축", "type": "함축", "stem": "밑줄 친 \"people won't bond with your arguments in a vacuum\"이 다음 글에서 의미하는 바로 가장 적절한 것은?", "ul": "people won't bond with your arguments in a vacuum", "psg": "There is simply no better way to influence or stir an audience — instantly, powerfully, authentically — than by opening up to them with a personal story or anecdote. To be clear: I'm not saying you need to tell them long stories about your family vacations or show them baby pictures from the stage. I'm saying that you can share a key biographical detail, or an emotion that you're feeling in the moment, or a self-deprecating joke. It is a tried-and-tested way of bonding with an audience of strangers — and of laying the groundwork for you to then persuade them. The harsh reality is that people won't bond with your arguments in a vacuum, but they will, says speech coach Bas van den Beld, \"bond with you\" — the person making those arguments. By sharing a revealing story or a personal flaw, you allow audience members a way to identify with you.", "opts": ["audiences can never be persuaded through logic alone, no matter how clear it is", "facts and data lose their power when delivered in an overly formal speaking style", "overly prepared speeches fail to engage audiences who expect spontaneous remarks", "logical arguments without a personal connection to the speaker fail to resonate", "abstract ideas become persuasive only when supported by concrete statistical evidence"], "ans": 3, "exp": "\"in a vacuum\"은 개인적 연결이 없는 상태를 뜻합니다. 지문에서 사람들이 논거 자체가 아니라 논거를 만드는 사람과 유대한다고 했으므로, 개인적 연결 없는 논거만으로는 청중이 공감하지 못한다는 의미입니다. ④ \"논거가 화자와 개인적 연결 없이는 울림을 주지 못한다\"가 정답입니다."}]}, "21": {"fn": "* unprecedented: 전례 없는  ** ancestor: 조상  *** stewardship: (재산·조직체 등의) 관리", "qs": [{"id": "21-1", "type": "주제", "stem": "다음 글의 주제로 가장 적절한 것은?", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth. We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants.", "opts": ["the genetic and cultural advancements that have connected all of humanity", "how indigenous traditions can serve as models for modern environmental policy", "the responsibility of present generations to protect the well-being of those who come after them", "the role of individual decisions in shaping the cultural identity of future communities", "why strong connections among people today ensure a better future for all"], "ans": 2, "exp": "이 글의 핵심 메시지는 \"지금 우리의 결정이 수십억 미래 세대의 삶에 영향을 미치므로, 우리는 그들을 위한 책임을 져야 한다\"는 것입니다. ③이 이 내용을 가장 잘 담고 있습니다. ①은 유전·문화적 발전과 연결성 이야기인데, 그것은 배경일 뿐 글의 핵심은 책임입니다. ②는 원주민 전통이 환경 정책의 모델이 된다는 내용으로, 이로쿼이 사례는 글의 예시일 뿐입니다."}, {"id": "21-2", "type": "제목", "stem": "다음 글의 제목으로 가장 적절한 것은?", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth. We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants.", "opts": ["The Power of Connection: How Humanity Shapes Its Own Future", "Seven Generations: The Iroquois Guide to Environmental Stewardship", "Don’t Steal the Shade: Our Duty to Future Generations", "Learning from Our Ancestors: A Path to Personal Growth", "Networked and Influential: The Hidden Role of Data in Society"], "ans": 2, "exp": "\"조상의 그늘을 훔치지 말라\"는 마지막 문장을 제목으로 만든 것입니다. 조상이 심은 나무의 그늘을 후손들이 누려야 하듯, 우리도 미래 세대를 위해 무언가를 남겨야 한다는 뜻입니다. 이 글의 핵심 의무를 가장 인상적으로 표현한 ③이 정답입니다. ①은 인류의 연결성을 강조하지만, 글의 핵심은 미래 세대를 위한 의무입니다."}, {"id": "21-3", "type": "빈칸", "stem": "다음 빈칸에 들어갈 말로 가장 적절한 것을 고르시오.", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth. We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the _____ of billions of people whose lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants.", "opts": ["independence", "intelligence", "welfare", "ambitions", "memories"], "ans": 2, "exp": "빈칸은 \"수십억 사람들의 _____을 상상하며\"라는 자리입니다. 글에서는 미래 세대가 살아갈 세상을 만드는 것이 우리의 책임이라고 했으므로, ③ welfare(복지, 안녕)가 가장 자연스럽습니다. ① independence(독립)나 ④ ambitions(야망)는 미래 세대를 위해 걱정하는 맥락과 거리가 있습니다."}, {"id": "21-4", "type": "빈칸", "stem": "다음 빈칸에 들어갈 말로 가장 적절한 것을 고르시오. [KILLER]", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth. We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not _____.", "opts": ["consume today what should be preserved for those who come after us", "ignore the lessons we have learned from past civilizations", "underestimate our genetic and cultural power as a species", "fail to acknowledge the contributions of indigenous communities", "focus only on immediate gains without considering the consequences for those who come after us"], "ans": 0, "exp": "빈칸은 \"우리는 _____ 해서는 안 된다\"는 자리입니다. 글 전체의 결론은 조상이 남긴 것을 우리가 누리듯, 우리도 후손을 위해 무언가를 보존해야 한다는 것입니다. ① \"오늘 다 써버리지 말고 미래 세대를 위해 보존해야 할 것을 지켜라\"가 이 흐름을 가장 잘 담습니다. ②는 과거 교훈을 무시한다는 뜻인데, 글은 과거에서 배우는 것보다 미래를 보호하는 데 초점을 둡니다. ⑤ \"즉각적인 이득에만 집중하고 결과를 고려하지 않는다\"도 글과 방향이 비슷해 보이지만, 글의 핵심은 후손을 위해 보존해야 한다는 것이지 \"이득\"의 문제가 아닙니다."}, {"id": "21-5", "type": "어휘", "stem": "다음 글의 밑줄 친 부분 중, 문맥상 낱말의 쓰임이 적절하지 않은 것은? [KILLER]", "psg": "We are now at a point of ①unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth. We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a ②grander humanity. Our decisions today have far-reaching ③limited impacts that place a ④responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the ⑤precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants.", "opts": ["①", "②", "③", "④", "⑤"], "ans": 2, "exp": "이 글의 핵심 논지는 지금 우리의 결정이 수십억 명의 미래 세대에게까지 영향을 미친다는 것입니다. 그래서 좋은 조상이 될 책임이 있다고 했습니다. 이 맥락에서 \"광범위하게 미치는(far-reaching)\" 영향은 글 전체를 관통하는 핵심 표현입니다. 그런데 ③ limited(제한적인)는 이 흐름에 정반대입니다 — 영향이 제한적이라면 미래 세대에 대한 책임도 사라집니다. ③을 far-reaching으로 고쳐야 합니다."}, {"id": "21-6", "type": "어법", "stem": "다음 글의 밑줄 친 부분 중, 어법상 틀린 것은?", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are ①linked to nearly every other person on Earth. We are embodied individuals ②trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people ③who lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" ④instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens ⑤planted by our ancestors, we must not steal the shade from our descendants.", "opts": ["①", "②", "③", "④", "⑤"], "ans": 2, "exp": "③ who의 자리를 보면, 뒤에 lives will be lived라는 완전한 절이 이어지고 있습니다. \"그들의 삶이 살아질\"이라는 소유의 의미가 필요하므로, 주격 who 대신 소유격 whose로 고쳐야 합니다. ① linked / ② trapped / ④ instructing / ⑤ planted 는 모두 문법적으로 적절합니다."}, {"id": "21-7", "type": "순서", "stem": "주어진 글 다음에 이어질 글의 순서로 가장 적절한 것은?", "given": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth.", "seq": {"A": "We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity.", "B": "Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making.", "C": "Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants."}, "opts": ["(A)–(B)–(C)", "(A)–(C)–(B)", "(C)–(A)–(B)", "(C)–(B)–(A)", "(B)–(A)–(C)"], "ans": 0, "exp": "주어진 문장: 우리는 전례 없는 힘을 가진 종으로 지구의 거의 모든 사람과 연결되어 있다. → (A): 하지만 우리는 시간적으로 제한된 개인이면서도 거대한 인류의 일부다. → (B): 그 때문에 오늘 우리의 결정은 수십억 미래 세대에 영향을 미치며, 좋은 조상이 될 책임이 있다. → (C): 이로쿼이 사람들의 7세대 사례가 이를 보여주며, 조상의 그늘을 훔치지 않는 것이 결론이다. 정답: ① (A)–(B)–(C)."}, {"id": "21-8", "type": "삽입", "stem": "글의 흐름으로 보아, 주어진 문장이 들어가기에 가장 적절한 곳은?", "given": "Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future.", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, ( ① ) and we are linked to nearly every other person on Earth. ( ② ) We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. ( ③ ) Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making. ( ④ ) In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants. ( ⑤ )", "opts": ["①", "②", "③", "④", "⑤"], "ans": 3, "exp": "주어진 문장은 \"이로쿼이 사람들이 7세대 후손까지 영향을 고려해 결정하라고 가르쳤다\"는 내용입니다. ④ 앞 문장은 \"우리가 만들어가는 세상에서 살아갈 수십억 명을 상상해야 한다\"이고, ④ 뒤 문장은 \"조상이 심은 정원을 즐기며 후손의 그늘을 훔치지 말자\"입니다. 미래 세대를 위한 구체적 실천 사례(이로쿼이)가 ④에 들어갈 때 앞뒤 흐름이 가장 자연스럽습니다."}, {"id": "21-9", "type": "요약", "stem": "다음 글의 내용을 한 문장으로 요약하려 할 때, 빈칸 (A), (B)에 들어갈 말로 가장 적절한 것은? [KILLER]", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth. We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants.", "sum": "As a species with unprecedented (A)_____ we have a duty to protect the (B)_____ of future generations, not merely our own.", "opts": ["agency — welfare", "isolation — independence", "agency — success", "vulnerability — welfare", "isolation — freedom"], "ans": 0, "exp": "요약 문장: \"전례 없는 (A)를 가진 종으로서, 우리는 미래 세대의 (B)를 지킬 의무가 있다.\" (A)에는 우리가 가진 전례 없는 힘과 주체성을 뜻하는 agency가 들어갑니다. (B)에는 미래 세대의 삶의 질을 뜻하는 welfare(복지)가 가장 적절합니다 — 글에서 \"well-being of billions\"라고 한 것과 같은 의미입니다. ③ agency/success: success(성공)는 글이 강조하는 미래 세대 복지와 방향이 다릅니다. ④ vulnerability/welfare: (B)는 맞지만 (A) vulnerability(취약성)는 글이 강조하는 우리의 힘·책임과 방향이 반대입니다."}, {"id": "21-s1", "type": "서술형1", "stem": "다음 글의 내용을 요약한 문장의 빈칸 (A), (B)에 들어갈 말을 <보기>에서 골라 쓰시오.", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth. We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants.", "sum": "As humans possessing exceptional (A)_____, we are responsible for safeguarding the (B)_____ of those who will live in the future, not just our own interests.", "opts": ["agency", "limitation", "authority", "welfare", "survival", "profit"], "ans_key": {"A": "agency", "B": "welfare"}}, {"id": "21-s2", "type": "서술형2", "stem": "다음 글의 내용을 요약한 문장의 빈칸에 들어갈 말을 본문에서 찾아 쓰시오. (필요시 형태를 변형할 것)", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth. We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants.", "sum": "As a species with unprecedented (A)_____, we have a duty to protect the (B)_____ of future generations, not merely our own.", "ans_key": {"A": "power", "B": "well-being"}}, {"id": "21-함축", "type": "함축", "stem": "밑줄 친 \"steal the shade from our descendants\"가 다음 글에서 의미하는 바로 가장 적절한 것은? [KILLER]", "ul": "steal the shade from our descendants", "psg": "We are now at a point of unprecedented genetic, cultural, and environmental power as a species, and we are linked to nearly every other person on Earth. We are embodied individuals trapped within limited time, but we are also networked data streams, memories, and influencers, and part of a grander humanity. Our decisions today have far-reaching impacts that place a responsibility on us to become good ancestors, to take the long view and time travel forward to imagine the well-being of billions of people whose lives will be lived in the world we are currently making. Centuries ago, leaders of the native North American Iroquois people created \"seven generation stewardship,\" instructing people to consider the impact of every decision on their children, seven generations into the future. In the precious few decades that Earth is ours, while we enjoy the gardens planted by our ancestors, we must not steal the shade from our descendants.", "opts": ["take away the benefits and conditions that future generations should rightfully enjoy", "allow the comforts we currently enjoy to quietly erode the foundations that others will need", "neglect to pass on the lessons and examples set by those who lived before us", "undermine the capacity of future generations to make meaningful choices about their world", "leave behind a world stripped of the natural beauty our ancestors worked to protect"], "ans": 0, "exp": "\"shade\"는 조상이 심은 나무가 제공하는 그늘, 즉 후손이 누려야 할 자원과 혜택의 비유입니다. ① \"후손이 마땅히 누려야 할 혜택과 조건을 빼앗다\"가 정답입니다. ⑤는 shade를 자연경관으로 문자 그대로 해석한 오답입니다."}]}}}};
+
+const NUMS=['①','②','③','④','⑤'];
+const ALL_TYPES=['주제','제목','빈칸','함축','어휘','어법','순서','삽입','관계없는','요약','서술형1','서술형2'];
+const NO_OPTS=['어휘','어법','삽입','관계없는','서술형1','서술형2'];
+const MODES=[
+  {id:'by-num',  label:'번호별 전체 유형', sub:'선택한 지문 번호 순으로 출제'},
+  {id:'by-type', label:'유형별 프린트',     sub:'빈칸끼리, 어법끼리 등 유형으로 묶어서'},
+  {id:'random',  label:'랜덤 믹스 프린트',  sub:'선택한 문항을 무작위로 섞어서'}
+];
+
+// A4 인쇄 기준 단 높이 계산:
+// A4(1123px) - @page여백(76px) - 헤더(41px) - body패딩(22px) ≈ 984px
+// 안전 마진 확보를 위해 880px 사용 (overflow 원천 차단)
+const COL_H = 880;
+
+// ★ 단당 최대 문항 수 — 이 수를 초과하면 다음 단으로 강제 이동
+// CSS 압축 후 문항당 ~480px → 2개 = 960px < 999px
+const MAX_PER_COL = 2;
+
+
+
+
+let S={grade:'',year:'',month:'',sel:[],types:new Set(ALL_TYPES),mode:'by-num'};
+const exam=()=>DB[S.grade+'|'+S.year+'|'+S.month]||null;
+
+/* ── HTML 이스케이프 ── */
+function esc(str){
+  return String(str||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* ── DB 검증 (개발/출시 전 확인용) ── */
+function validateDB(){
+  if(typeof DB==='undefined'){console.warn('DB 미로드');return [];}
+  var errs=[];
+  Object.keys(DB).forEach(function(key){
+    var ed=DB[key];
+    var readySet=ed.ready||[];
+    var passKeys=Object.keys(ed.passages||{}).map(Number);
+    readySet.forEach(function(n){
+      if(passKeys.indexOf(n)<0) errs.push('['+key+'] ready '+n+'번이 passages에 없음');
+    });
+    passKeys.forEach(function(n){
+      var p=ed.passages[n];
+      if(!p||!Array.isArray(p.qs)||p.qs.length===0){errs.push('['+key+'] '+n+'번 qs 비어 있음');return;}
+      p.qs.forEach(function(q,i){
+        if(ALL_TYPES.indexOf(q.type)<0) errs.push('['+key+'] '+n+'번 Q'+(i+1)+' type 오류: '+q.type);
+        if(NO_OPTS.indexOf(q.type)<0){
+          if(!Array.isArray(q.opts)||q.opts.length!==5) errs.push('['+key+'] '+n+'번 Q'+(i+1)+' opts 개수 오류');
+          if(typeof q.ans!=='number'||q.ans<0||q.ans>4) errs.push('['+key+'] '+n+'번 Q'+(i+1)+' ans 범위 오류: '+q.ans);
+        }
+      });
+    });
+  });
+  if(errs.length){console.warn('DB 검증 오류:',errs);}
+  return errs;
+}
+validateDB();
+
+/* ── 시험 제목 동적 생성 ── */
+function getExamTitle(e){
+  return (e && e.label) ? e.label+' 변형문제' : '변형문제';
+}
+
+function renderPsg(t, type){
+  if(!t) return '';
+  var out=esc(t);
+  // 밑줄은 어법/어휘 유형에만 적용 (다단어 ~연결 포함)
+  if(type==='어법'||type==='어휘'){
+    out=out.replace(/([①②③④⑤])(\S+)/g,function(m,marker,word){
+      return '<u>'+marker+word.replace(/~/g,' ')+'</u>';
+    });
+  }
+  return out
+    .replace(/_{4,}/g,'<span class="blank">______</span>')
+    .replace(/\(\s*([①②③④⑤])\s*\)/g,'<span class="mkr">( $1 )</span>');
+}
+
+/* ── 함축 전용: ul 구문에 밑줄 처리 ── */
+function renderPsgUl(psgText, ulText){
+  if(!psgText) return '';
+  var out = esc(psgText);
+  if(ulText){
+    var escapedUl = esc(ulText).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    out = out.replace(new RegExp('('+escapedUl+')', 'g'), '<u>$1</u>');
+    // 대괄호 [ ] 로 감싼 경우도 처리 (일부 psg에 [ul text] 형태)
+    var bracketPat = esc('['+ulText+']').replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    out = out.replace(new RegExp('\\['+escapedUl+'\\]', 'g'), '<u>'+esc(ulText)+'</u>');
+  }
+  return out.replace(/_{4,}/g,'<span class="blank">______</span>');
+}
+
+// 관계없는 문장 전용 렌더링 — 번호 앞 줄바꿈 + 시각 경계
+function renderIrrel(t){
+  if(!t) return '';
+  return esc(t)
+    .replace(/\s+([①②③④⑤])\s+/g,'<br><b class="irrel-n">$1</b>&nbsp;')
+    .replace(/_{4,}/g,'<span class="blank">______</span>');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function makePill(l,act,off,fn){
+  var b=document.createElement('button');
+  b.className='pill'+(act?' active':'')+(off?' off':'');
+  b.textContent=l;
+  if(!off) b.addEventListener('click',fn);
+  return b;
+}
+function renderPills(id,items,key,dep){
+  var el=document.getElementById(id); el.innerHTML='';
+  var dis=dep&&!S[dep];
+  items.forEach(function(item){
+    var v=typeof item==='object'?item.v:item, l=typeof item==='object'?item.l:item;
+    el.appendChild(makePill(l,S[key]===v,dis,function(){S[key]=v;render();}));
+  });
+}
+function getFilteredQs(qs){
+  if(S.types.size===ALL_TYPES.length) return qs;
+  return qs.filter(function(q){return S.types.has(q.type);});
+}
+
+function render(){
+  renderPills('g-pills',['고1','고2','고3'],'grade',null);
+  renderPills('y-pills',['2025','2026'],'year','grade');
+  renderPills('m-pills',[{v:'3',l:'3월'},{v:'6',l:'6월'},{v:'9',l:'9월'},{v:'11',l:'11월'}],'month','year');
+  var st=document.getElementById('status-row');
+  if(!S.grade) st.textContent='👆 학년을 먼저 선택해 주세요.';
+  else if(!S.year) st.innerHTML='<span class="status-badge">'+S.grade+'</span> — 년도를 선택해 주세요.';
+  else if(!S.month) st.innerHTML='<span class="status-badge">'+S.grade+'</span><span class="status-badge">'+S.year+'</span> — 월을 선택해 주세요.';
+  else st.innerHTML='<span class="status-badge">'+S.grade+'</span><span class="status-badge">'+S.year+'학년도 '+S.month+'월</span> ✓ 지문을 선택해 주세요.';
+  var e=exam(), s3=document.getElementById('step3');
+  if(!e){s3.style.display='none';return;} s3.style.display='block';
+
+  /* 필터 변경 시 선택 지문 자동 정리 — 0문항이 된 지문은 선택 해제 */
+  S.sel=S.sel.filter(function(pn){
+    return getFilteredQs((e.passages[pn]||{qs:[]}).qs).length>0;
+  });
+  var grid=document.getElementById('q-grid'); grid.innerHTML='';
+  e.allNums.forEach(function(n){
+    var isR=e.ready.indexOf(n)>=0;
+    var fqs=isR?getFilteredQs((e.passages[n]||{qs:[]}).qs):[];
+    var isSel=S.sel.indexOf(n)>=0;
+    var b=document.createElement('button');
+    b.className='q-btn'+(isSel?' active':'')+(isR?'':' off');
+    b.innerHTML='<div>'+n+'번</div><div class="sub">'+(isR?(fqs.length>0?fqs.length+'문항':'유형없음'):'준비 중')+'</div>';
+    if(isR&&fqs.length>0) b.addEventListener('click',(function(num){return function(){
+      var i=S.sel.indexOf(num);if(i>=0)S.sel.splice(i,1);else S.sel.push(num);render();
+    };})(n));
+    grid.appendChild(b);
+  });
+  var tp=document.getElementById('type-pills'); tp.innerHTML='';
+  ALL_TYPES.forEach(function(t){
+    var b=document.createElement('button');
+    b.className='type-pill'+(S.types.has(t)?' active':'');
+    b.textContent=t;
+    b.addEventListener('click',function(){
+      if(S.types.has(t)){if(S.types.size>1)S.types.delete(t);}else S.types.add(t);render();
+    });
+    tp.appendChild(b);
+  });
+  var mb=document.getElementById('mode-btns'); mb.innerHTML='';
+  MODES.forEach(function(m){
+    var b=document.createElement('button');
+    b.className='mode-btn'+(S.mode===m.id?' active':'');
+    b.innerHTML=m.label+'<span class="msub">'+m.sub+'</span>';
+    b.addEventListener('click',function(){S.mode=m.id;render();});
+    mb.appendChild(b);
+  });
+  var total=S.sel.reduce(function(s,pn){return s+getFilteredQs((e.passages[pn]||{qs:[]}).qs).length;},0);
+  var qs=document.getElementById('q-summary');
+  if(total>0){qs.style.display='block';qs.textContent='📋  '+S.sel.length+'개 지문·'+Array.from(S.types).join('·')+'·총 '+total+'문항';}
+  else qs.style.display='none';
+  document.getElementById('gen-btn').disabled=(total===0);
+}
+
+/* ── 문항 HTML 생성 ── */
+function qHtml(it){
+  var type=it.type;
+  var fnH=it.fn?'<div class="p-fn">'+it.fn+'</div>':'';
+  var pnTag='<span class="pn-tag">['+it.pn+'번 지문]</span>';
+  var qhd='<div class="q-hd"><span class="q-n">'+it.num+'.</span><span class="q-stem">'+it.stem+'&nbsp;'+pnTag+'</span></div>';
+  var body='';
+  if(type==='관계없는'){
+    body=(it.psg?'<div class="p-text">'+renderIrrel(it.psg)+'</div>':'')+fnH;
+  }else if(type==='함축'){
+    var psgUlH=it.psg?'<div class="p-text">'+renderPsgUl(it.psg, it.ul)+'</div>':'';
+    body=psgUlH+fnH;
+  }else if(type==='순서'){
+    var gH=it.given?'<div class="given-box">'+renderPsg(it.given,type)+'</div>':'';
+    var seqH='';
+    if(it.seq){seqH='<div class="seq-blocks">';Object.keys(it.seq).forEach(function(k){seqH+='<div class="seq-block"><span class="seq-label">('+k+')</span>'+renderPsg(it.seq[k],type)+'</div>';});seqH+='</div>';}
+    body=gH+seqH+fnH;
+  }else if(type==='삽입'){
+    body=(it.given?'<div class="given-box">'+renderPsg(it.given,type)+'</div>':'')+(it.psg?'<div class="p-text">'+renderPsg(it.psg,type)+'</div>':'')+fnH;
+  }else{
+    body=(it.psg?'<div class="p-text">'+renderPsg(it.psg,type)+'</div>':'')+fnH;
+  }
+  // ── 서술형 처리 ──────────────────────────────────────────
+  if(type==='서술형1'||type==='서술형2'){
+    var psgH=it.psg?'<div class="p-text">'+renderPsg(it.psg,'빈칸')+'</div>':'';
+    var sumTxt=it.sum||'';
+    // (A)___ → 빈칸 표시
+    var sumDisp=sumTxt.replace(/\(([A-C])\)_+/g,'<span class="blank-key">______(<b>$1</b>)______</span>');
+    var sumBoxH='<div class="sum-box s-sum">'+sumDisp+'</div>';
+    var optsLineH='';
+    if(type==='서술형1'&&it.opts&&it.opts.length){
+      optsLineH='<div class="s-opts-wrap"><span class="s-opts-label">&lt;보기&gt;</span>'
+        +it.opts.map(function(o){return '<span class="s-opt">'+o+'</span>';}).join('')
+        +'</div>';
+    }
+    return qhd+fnH+psgH+sumBoxH+optsLineH;
+  }
+  var sumH=it.sum?'<div class="sum-box">'+it.sum+'</div>':'';
+  var optsH='';
+  if(NO_OPTS.indexOf(type)<0){
+    optsH='<div class="q-opts">'+it.opts.map(function(o,i){return '<div class="q-opt">'+NUMS[i]+'&nbsp;'+o+'</div>';}).join('')+'</div>';
+  }
+  return qhd+body+sumH+optsH;
+}
+
+/* ── 아이템 목록 — 완성형 item (DB 원본 q 참조 없음) ── */
+function buildItems(e){
+  var raw=[];
+  S.sel.slice().sort(function(a,b){return a-b;}).forEach(function(pn){
+    var p=e.passages[pn];if(!p)return;
+    getFilteredQs(p.qs).forEach(function(q){
+      raw.push({
+        qid:     q.id,
+        type:    q.type,
+        pn:      pn,
+        fn:      p.fn||'',
+        stem:    q.stem||'',
+        psg:     q.psg||'',
+        ul:      q.ul||'',
+        given:   q.given||'',
+        seq:     q.seq||null,
+        sum:     q.sum||'',
+        opts:    Array.isArray(q.opts)?q.opts.slice():[],
+        ansIndex: q.ans,
+        ansLabel: (typeof q.ans==='number'&&q.ans>=0&&q.ans<=4)?NUMS[q.ans]:'',
+        exp:     q.exp||'',
+        ans_key: q.ans_key||null,
+        num:     null
+      });
+    });
+  });
+  if(S.mode==='by-type'){
+    var grp={};ALL_TYPES.forEach(function(t){grp[t]=[];});
+    raw.forEach(function(it){if(grp[it.type])grp[it.type].push(it);});
+    var out=[];ALL_TYPES.forEach(function(t){out=out.concat(grp[t]);});return out;
+  }else if(S.mode==='random'){
+    var arr=raw.slice();
+    for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;}
+    return arr;
+  }
+  return raw;
+}
+
+/* ── DOM 높이 측정 ── */
+function measureHeights(items){
+  var msr=document.getElementById('measurer');
+  msr.innerHTML='';
+  var divs=items.map(function(it){
+    var d=document.createElement('div');
+    d.className='q-full';
+    if(it._combined){
+      // 서술형C: s1(psg포함) + s2(psg제외) 합산 높이 측정
+      var s2noP=JSON.parse(JSON.stringify(it.s2)); s2noP.psg='';
+      d.innerHTML=qHtml(it.s1)+qHtml(s2noP);
+    } else {
+      d.innerHTML=qHtml(it);
+    }
+    msr.appendChild(d);
+    return d;
+  });
+  var heights=divs.map(function(d){return d.offsetHeight+10;});
+  msr.innerHTML='';
+  return heights;
+}
+
+/* ── 페이지 분할 — 4문제 목표형 (4→3→2→1 fallback) ── */
+function paginateSul(sulItems){
+  // 1단계: pn별로 그룹핑 (모드 무관하게 s1+s2를 pn으로 묶음)
+  var pnMap={}, pnOrder=[];
+  sulItems.forEach(function(it){
+    if(!pnMap[it.pn]){ pnMap[it.pn]=[]; pnOrder.push(it.pn); }
+    pnMap[it.pn].push(it);
+  });
+  // pnOrder: 지문 번호 순 정렬
+  pnOrder.sort(function(a,b){return parseInt(a)-parseInt(b);});
+
+  // 2단계: 각 pn 그룹을 2개씩 left/right 배치
+  var pages=[], i=0;
+  while(i<pnOrder.length){
+    var grpA=pnMap[pnOrder[i]]; i++;
+    var grpB=(i<pnOrder.length)?pnMap[pnOrder[i]]:[];
+    if(grpB.length) i++;
+    pages.push({left:grpA, right:grpB, isSul:true});
+  }
+  return pages;
+}
+
+function paginate(items, heights){
+  var pages=[], i=0, n=items.length;
+  var sulPaired={};
+
+  while(i < n){
+    var pg=null;
+    var rem=n-i;
+
+    // 서술형C는 일반 문항처럼 처리 (isSul 플래그만 유지)
+    // → 별도 분기 없음, 아래 일반 로직으로 처리됨
+
+    // ── 일반 문항 처리 ────────────────────────────────────
+    // 다음 서술형 직전까지만 일반 로직 적용
+    // ① 4문제
+    if(!pg&&rem>=4){
+      var ok=items[i].type!=='서술형1'&&items[i].type!=='서술형2'&&
+             items[i+1].type!=='서술형1'&&items[i+1].type!=='서술형2'&&
+             items[i+2].type!=='서술형1'&&items[i+2].type!=='서술형2'&&
+             items[i+3].type!=='서술형1'&&items[i+3].type!=='서술형2';
+      if(ok&&heights[i]+heights[i+1]<=COL_H&&heights[i+2]+heights[i+3]<=COL_H){
+        pg={left:[items[i],items[i+1]],right:[items[i+2],items[i+3]]};i+=4;
+      }
+    }
+    // ② L2+R1
+    if(!pg&&rem>=3){
+      var ok=items[i].type!=='서술형1'&&items[i].type!=='서술형2'&&
+             items[i+1].type!=='서술형1'&&items[i+1].type!=='서술형2'&&
+             items[i+2].type!=='서술형1'&&items[i+2].type!=='서술형2';
+      if(ok&&heights[i]+heights[i+1]<=COL_H&&heights[i+2]<=COL_H){
+        pg={left:[items[i],items[i+1]],right:[items[i+2]]};i+=3;
+      }
+    }
+    // ③ L1+R2
+    if(!pg&&rem>=3){
+      var ok=items[i].type!=='서술형1'&&items[i].type!=='서술형2'&&
+             items[i+1].type!=='서술형1'&&items[i+1].type!=='서술형2'&&
+             items[i+2].type!=='서술형1'&&items[i+2].type!=='서술형2';
+      if(ok&&heights[i]<=COL_H&&heights[i+1]+heights[i+2]<=COL_H){
+        pg={left:[items[i]],right:[items[i+1],items[i+2]]};i+=3;
+      }
+    }
+    // ④ 2문제
+    if(!pg&&rem>=2){
+      var ok2=items[i].type!=='서술형1'&&items[i].type!=='서술형2'&&
+              items[i+1].type!=='서술형1'&&items[i+1].type!=='서술형2';
+      if(ok2){pg={left:[items[i]],right:[items[i+1]]};i+=2;}
+    }
+    // ⑤ 1문제 (서술형이 아닌 단독)
+    if(!pg){pg={left:[items[i]],right:[]};i+=1;}
+    pages.push(pg);
+  }
+  return pages;
+}
+
+/* ── 페이지 렌더링 ── */
+function renderPages(pages, items, modeLabel, examTitle){
+  var wrap=document.getElementById('pageWrap');
+  wrap.innerHTML='';
+
+  // 유형별 섹션 헤더 위치 계산
+  var secHdrs={};
+  if(S.mode==='by-type'){
+    var prev='';
+    items.forEach(function(it){if(it.type!==prev){secHdrs[it.qid]=it.type;prev=it.type;}});
+  }
+
+  pages.forEach(function(pg,pi){
+    // 빈 페이지 건너뜀 (left·right 모두 비어있으면 렌더링 제외)
+    if(!pg.left.length && !pg.right.length) return;
+
+    var pageEl=document.createElement('div');
+    pageEl.className='page';
+
+    // 모든 페이지 동일 헤더 구조
+    var itemCount = pg.left.length + pg.right.length;
+    pageEl.innerHTML=
+      '<div class="page-hd">'+
+        '<div class="page-hd-title">'+examTitle+'</div>'+
+        '<div class="page-hd-meta">'+
+          '<span style="font-size:9px;color:#aaa">'+modeLabel+'</span>'+
+          '<span style="font-size:9px;color:#c00;margin-left:6px">[pg'+(pi+1)+':'+itemCount+'문항]</span>'+
+        '</div>'+
+      '</div>';
+
+    var bodyEl=document.createElement('div');
+    bodyEl.className='page-body';
+
+    function makeCol(colItems){
+      var col=document.createElement('div');
+      col.className='col';
+      colItems.forEach(function(it){
+        if(secHdrs[it.qid]){
+          var sh=document.createElement('div');
+          sh.className='sec-hd';
+          sh.textContent='[ '+secHdrs[it.qid]+' ]';
+          col.appendChild(sh);
+        }
+        if(it._combined){
+          // 서술형C: s1(psg포함) + s2(psg제외) 렌더링, 번호 순서대로
+          var s1r=JSON.parse(JSON.stringify(it.s1));
+          s1r.num=it.num;
+          var qd1=document.createElement('div');
+          qd1.className='q-full';
+          qd1.innerHTML=qHtml(s1r);
+          col.appendChild(qd1);
+          var s2noP=JSON.parse(JSON.stringify(it.s2));
+          s2noP.psg='';
+          s2noP.num=it.num+1;
+          var qd2=document.createElement('div');
+          qd2.className='q-full';
+          qd2.innerHTML=qHtml(s2noP);
+          col.appendChild(qd2);
+        } else {
+          var qd=document.createElement('div');
+          qd.className='q-full';
+          qd.innerHTML=qHtml(it);
+          col.appendChild(qd);
+        }
+      });
+      return col;
+    }
+
+    var allItems=pg.left.concat(pg.right);
+    var hasSul=pg.isSul||false;
+
+    if(false){ // hasSul 로직 제거 — makeCol에서 처리
+    } else {
+      bodyEl.appendChild(makeCol(pg.left));
+      var divEl=document.createElement('div');
+      divEl.className='col-div';
+      bodyEl.appendChild(divEl);
+      bodyEl.appendChild(makeCol(pg.right));
+    }
+    pageEl.appendChild(bodyEl);
+    wrap.appendChild(pageEl);
+  });
+
+  // ── [체험판] 정답·해설 페이지를 구매 유도 페이지로 교체 ──────────
+  var ansPage=document.createElement('div');
+  ansPage.className='page';
+  ansPage.innerHTML=
+    '<div class="page-hd">'+
+      '<div class="page-hd-title">'+examTitle+'</div>'+
+      '<div class="page-hd-meta">정답 · 해설 (체험판 제한)</div>'+
+    '</div>'+
+    '<div style="padding:60px 40px;text-align:center">'+
+      '<div style="font-size:18pt;font-weight:bold;color:#1B3668;margin-bottom:16pt">🔒 정답과 해설은 구매 후 제공됩니다</div>'+
+      '<div style="font-size:10.5pt;color:#444;line-height:1.8;margin-bottom:28pt;max-width:420px;margin-left:auto;margin-right:auto">'+
+        '체험판에서는 앱의 문제 생성·출제 기능만 보여드립니다.<br>'+
+        '전체 <strong>203문항</strong>의 정답과 해설, 그리고 <strong>PDF·Word·HWP 파일</strong>은<br>'+
+        '정식 패키지에서 제공됩니다.'+
+      '</div>'+
+      '<div style="display:inline-block;padding:18pt 24pt;background:#f6f2e8;border:1.5px solid #C9A961;border-radius:4px;text-align:left;max-width:420px">'+
+        '<div style="font-size:10pt;font-weight:bold;color:#1B3668;margin-bottom:8pt">정식 패키지 포함 사항</div>'+
+        '<div style="font-size:9.5pt;line-height:1.9;color:#333">'+
+          '✓ 2026년 3월 고1 전 지문 (18개) · 203문항<br>'+
+          '✓ 번호별 / 유형별 / 랜덤믹스 자동 출제<br>'+
+          '✓ 정답 일람표 + 해설<br>'+
+          '✓ PDF · Word · 한글(HWP) 파일 제공<br>'+
+          '✓ 자유 편집 · 재배포 가능 (강사 라이선스)'+
+        '</div>'+
+      '</div>'+
+      '<div style="margin-top:28pt">'+
+        '<button onclick="goToPurchase()" style="padding:12pt 28pt;background:#1B3668;color:#fff;border:none;border-radius:3px;font-size:11pt;font-weight:bold;cursor:pointer">전체 패키지 보기 →</button>'+
+      '</div>'+
+      '<div style="margin-top:18pt;font-size:8.5pt;color:#888">SF English · 배대은 · 010-2937-7123</div>'+
+    '</div>';
+  wrap.appendChild(ansPage);
+} // end renderPages
+
+/* ── 생성 버튼 ── */
+document.getElementById('all-btn').addEventListener('click',function(){
+  var e=exam();
+  if(e){
+    S.sel=e.ready.filter(function(pn){
+      return getFilteredQs((e.passages[pn]||{qs:[]}).qs).length>0;
+    });
+    render();
+  }
+});
+document.getElementById('clr-btn').addEventListener('click',function(){S.sel=[];render();});
+
+document.getElementById('gen-btn').addEventListener('click',function(){
+  var e=exam();if(!e)return;
+  var items=buildItems(e);if(!items.length)return;
+
+  items.forEach(function(it,idx){it.num=idx+1;});
+
+  // ── 정답 누락 문항 검사 (서술형 제외) ─────────────────
+  var missing=items.filter(function(it){
+    if(it.type==='서술형1'||it.type==='서술형2') return false;
+    return !it.ansLabel;
+  });
+  if(missing.length){
+    alert('정답이 누락된 문항이 있어 생성할 수 없습니다:\n'+
+      missing.map(function(it){return it.qid;}).join(', '));
+    return;
+  }
+
+  var examTitle = getExamTitle(e);
+  var modeLabel=MODES.find(function(m){return m.id===S.mode;}).label;
+  // s2를 pn별로 미리 map으로 만들기 (유형별 모드 대응)
+  var s2Map={};
+  items.forEach(function(it){ if(it.type==='서술형2') s2Map[it.pn]=it; });
+
+  // s1+s2를 하나의 combined 아이템으로 합침 (순서 무관)
+  var mergedItems=[];
+  for(var mi=0; mi<items.length; mi++){
+    var it=items[mi];
+    if(it.type==='서술형1'){
+      var s2=s2Map[it.pn];
+      if(s2){
+        mergedItems.push({_combined:true, s1:it, s2:s2,
+          qid:it.qid, type:'서술형C', pn:it.pn, fn:it.fn, num:it.num});
+      } else {
+        mergedItems.push(it);
+      }
+      continue;
+    }
+    if(it.type==='서술형2') continue; // 항상 건너뜀 (s1에서 처리됨)
+    mergedItems.push(it);
+  }
+  // 번호 재부여: combined 아이템은 2칸 차지
+  var numCounter=1;
+  mergedItems.forEach(function(it){
+    it.num=numCounter;
+    numCounter += it._combined ? 2 : 1;
+  });
+
+  var heights=measureHeights(mergedItems);
+  var pages=paginate(mergedItems,heights);
+
+  // ── 빈 페이지 제거 ───────────────────────────────────────────────
+  pages = pages.filter(function(pg){
+    return pg.left.length > 0 || pg.right.length > 0;
+  });
+
+  window._lastItems=mergedItems;
+  window._lastPages=pages;
+  window._lastExamTitle=examTitle;
+  renderPages(pages,mergedItems,modeLabel,examTitle);
+
+  document.getElementById('pv-info').textContent=
+    examTitle+' · '+items.length+'문항 · '+modeLabel+' · '+pages.length+'페이지';
+
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('previewScreen').style.display='block';
+  window.scrollTo(0,0);
+});
+
+document.getElementById('back-btn').addEventListener('click',function(){
+  document.getElementById('setupScreen').style.display='block';
+  document.getElementById('previewScreen').style.display='none';
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+render();
+
+/* ── [체험판] 인쇄 · 저장 · 복사 차단 ─────────────────────────────── */
+
+// 구매 페이지로 이동하는 함수 (랜딩페이지의 Pricing 섹션으로)
+function goToPurchase(){
+  // 부모창이 있으면 (iframe 임베드 상태) 부모창의 Pricing 섹션으로 스크롤
+  try {
+    if(window.parent && window.parent !== window){
+      window.parent.postMessage({type:'sf-trial-cta',target:'pricing'},'*');
+      return;
+    }
+  } catch(e){}
+  // 새 탭에서 랜딩페이지 Pricing 섹션 열기
+  window.open('SF-English.html#pricing','_blank');
+}
+
+// 체험판 제한 알림
+function showTrialLock(kind){
+  var msg={
+    print:'🔒 체험판에서는 인쇄 / PDF 저장이 제공되지 않습니다.\n\n전체 203문항 + PDF·Word·한글 파일은\n정식 패키지에서 제공됩니다.',
+    copy :'🔒 체험판에서는 복사가 제한됩니다.\n\n정식 패키지를 구매하시면 자유롭게\n편집·재배포하실 수 있습니다.'
+  }[kind]||'체험판 제한 항목입니다.';
+  if(confirm(msg+'\n\n전체 패키지를 살펴보시겠어요?')) goToPurchase();
+}
+
+// Ctrl+P / Cmd+P 단축키 차단
+window.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey) && (e.key==='p'||e.key==='P')){
+    e.preventDefault(); e.stopPropagation();
+    showTrialLock('print');
+    return false;
+  }
+  // Ctrl+S (저장) 차단
+  if((e.ctrlKey||e.metaKey) && (e.key==='s'||e.key==='S')){
+    e.preventDefault(); e.stopPropagation();
+    showTrialLock('print');
+    return false;
+  }
+},true);
+
+// window.print 함수 자체를 덮어쓰기
+(function(){
+  var origPrint=window.print;
+  window.print=function(){ showTrialLock('print'); };
+  // beforeprint 이벤트에서도 차단 시도 (브라우저 메뉴 → 인쇄)
+  window.addEventListener('beforeprint',function(e){
+    showTrialLock('print');
+  });
+})();
+
+// 우클릭 메뉴 차단 (문제지 영역에서만)
+document.addEventListener('contextmenu',function(e){
+  var inPreview=e.target.closest && e.target.closest('#previewScreen');
+  if(inPreview){ e.preventDefault(); showTrialLock('copy'); }
+});
+</script>
+</body>
+</html>
