@@ -867,13 +867,25 @@
       단 30초면 충분합니다.
     </p>
     <div class="hero-actions">
-      <a href="#pricing" class="btn-primary">
+      <a href="#pricing" class="btn-primary" style="position:relative;">
         패키지 구성 보기 &nbsp;↓
+        <span style="position:absolute; top:-10px; right:-10px; background:#c9a961; color:#1a1510; font-size:0.65rem; font-weight:700; padding:3px 7px; border-radius:3px; letter-spacing:0.3px; font-family:'Noto Sans KR', sans-serif; white-space:nowrap; box-shadow:0 1px 3px rgba(0,0,0,0.15);">얼리버드 40% OFF</span>
       </a>
-      <a href="https://docs.google.com/document/d/1NVOHNANfChqWuhlLiFOr47OuwOtxmwFy/edit?usp=sharing&ouid=104556120314050750894&rtpof=true&sd=true" class="btn-secondary" target="_blank">
-        무료 50문항 먼저 받기 ↗
+      <a href="http://pf.kakao.com/_xoxlxdZX/friend" class="btn-secondary" target="_blank" rel="noopener">
+        카톡채널 추가하고 무료 50문항 받기 💬
       </a>
     </div>
+  </div>
+</div>
+
+<!-- 현재 제공 범위 공지 -->
+<div style="background:linear-gradient(90deg, #f3ede3 0%, #ece5d8 100%); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:14px 20px;">
+  <div style="max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; font-family:'Noto Sans KR',sans-serif;">
+    <span style="background:var(--ink); color:var(--bg); padding:3px 10px; border-radius:3px; font-size:11px; font-weight:700; letter-spacing:0.3px; white-space:nowrap;">현재 제공 범위</span>
+    <span style="font-size:0.88rem; color:var(--ink-2); line-height:1.5;">
+      <strong style="color:var(--ink);">고1 · 2026년 3월 학력평가</strong>만 이용 가능합니다 &nbsp;·&nbsp;
+      <span style="color:var(--ink-dim);">고2 · 6월 모평 등은 순차 오픈 예정</span>
+    </span>
   </div>
 </div>
 
@@ -1057,6 +1069,41 @@
       </div>
     </div>
   </div>
+
+  <!-- ── [체험판 직접 체험] iframe 임베드 ────────────────────────── -->
+  <div class="trial-embed-wrap reveal" style="margin-top:100px;padding:0 60px;">
+    <div style="text-align:center;margin-bottom:32px">
+      <div class="section-label" style="display:inline-block;margin-bottom:12px">Try It — 체험판</div>
+      <h3 style="font-family:'Noto Serif KR',serif;font-size:clamp(1.5rem,2.4vw,2rem);font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:10px">
+        지금 이 화면에서 <span style="color:var(--gold)">직접 체험</span>해보세요
+      </h3>
+      <p style="color:var(--ink-dim);font-size:0.95rem;line-height:1.7;max-width:560px;margin:0 auto">
+        설치도 없이 이 페이지에서 바로 — 20번·21번 지문 2개, 23문항, 모든 출제 유형을 시험해보실 수 있습니다.
+      </p>
+    </div>
+
+    <div style="max-width:1100px;margin:0 auto;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:6px;position:relative;box-shadow:var(--shadow)">
+      <iframe
+        id="trial-iframe"
+        src="trial.html"
+        title="SF Exam Builder 체험판"
+        style="width:100%;height:1100px;border:none;border-radius:4px;background:#fff;display:block"
+        loading="lazy"
+        referrerpolicy="no-referrer"
+      ></iframe>
+    </div>
+
+    <div style="margin-top:18px;text-align:center;font-size:0.82rem;color:var(--ink-dim);line-height:1.7">
+      체험판은 지문 2개로 제한됩니다. 정답·인쇄·PDF 다운로드는 정식 패키지에서 제공됩니다.<br>
+      <span style="color:var(--ink-2)">📱 모바일에서는 PC 환경을 권장합니다.</span>
+    </div>
+
+    <div style="margin-top:36px;text-align:center">
+      <a href="#pricing" class="btn-primary" style="display:inline-block;text-decoration:none">
+        전체 패키지 살펴보기 ↓
+      </a>
+    </div>
+  </div>
 </section>
 
 <!-- COMPARE -->
@@ -1172,42 +1219,75 @@
   <div class="section-label reveal" style="justify-content:center;">Pricing</div>
   <h2 class="heading reveal" style="font-family:'Noto Serif KR',serif; font-size:clamp(1.8rem,2.8vw,2.4rem); font-weight:700; margin-bottom:12px; color:var(--ink); text-align:center;">오늘 주문하시면,<br>내일 수업 준비는 30초로 줄어듭니다</h2>
   <p class="sub reveal" style="color:var(--ink-dim); font-size:0.9rem; margin-bottom:48px; text-align:center;">변형문제집 한 권 가격으로 203번의 출제 고민을 덜어냅니다</p>
+
+  <!-- 현재 제공 범위 상세 안내 -->
+  <div class="reveal" style="max-width:720px; margin:0 auto 28px auto; padding:20px 24px; background:var(--bg-2); border:1px solid var(--border); border-radius:6px;">
+    <div style="display:flex; align-items:flex-start; gap:14px;">
+      <div style="background:var(--ink); color:var(--bg); padding:4px 10px; border-radius:3px; font-size:11px; font-weight:700; letter-spacing:0.3px; white-space:nowrap; flex-shrink:0;">현재 제공</div>
+      <div style="flex:1; font-size:0.88rem; color:var(--ink-2); line-height:1.75;">
+        <div style="color:var(--ink); font-weight:600; margin-bottom:6px;">고1 · 2026학년도 3월 전국연합학력평가</div>
+        <div style="color:var(--ink-dim); font-size:0.82rem;">
+          ✓ 전 지문 18개 · 변형문제 203문항 (함축 포함)<br>
+          ✓ PDF · Word · 한글(HWP) 파일 제공 · 영구 사용
+        </div>
+        <div style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); color:var(--ink-dim); font-size:0.8rem;">
+          <strong style="color:var(--ink-2);">🔜 순차 오픈 예정:</strong> 고2 3월 학평, 고1·고2 6월 모의평가, EBS 수능특강 등<br>
+          <span style="font-size:0.75rem; color:var(--ink-dim);">※ 신규 시험지 오픈 시 카카오채널로 먼저 알려드립니다</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="pricing-card reveal">
-    <div class="pricing-badge">가장 합리적인 출제 파트너</div>
-    <div class="pricing-price">
-      <sup>₩</sup>19,900<sub>/세트</sub>
+    <div class="pricing-badge" style="background:linear-gradient(135deg, #c9a961, #a07828); color:#fff;">📣 얼리버드 특가 · 초기 30명 한정</div>
+
+    <!-- 가격: 정가 취소선 + 특가 강조 -->
+    <div style="margin-bottom:4px;">
+      <span style="font-family:'DM Serif Display', serif; font-size:1.3rem; color:var(--ink-dim); text-decoration:line-through; text-decoration-thickness:1.5px;">₩19,900</span>
+      <span style="font-size:0.75rem; color:var(--gold); font-weight:600; margin-left:10px; background:var(--gold-dim); padding:3px 8px; border-radius:3px; letter-spacing:0.3px;">40% OFF</span>
+    </div>
+    <div class="pricing-price" style="margin-top:0;">
+      <sup>₩</sup>11,900<sub>/세트</sub>
     </div>
     <p class="pricing-note">부가세 포함 · 영구 사용 · 수업 활용 가능</p>
+
+    <!-- 얼리버드 설명 박스 -->
     <div style="background:var(--gold-dim); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:28px; font-size:0.82rem; color:var(--ink2); line-height:1.7; text-align:left;">
-      💡 보통 변형문제 1회분 가격으로 전체 지문 · 전체 유형 · 출제 앱까지 모두 제공합니다.
+      <div style="font-weight:600; color:var(--ink); margin-bottom:4px;">💡 얼리버드 특가란?</div>
+      초기 구매자 후기 수집을 위한 한정 할인입니다.<br>
+      <strong>30명 구매 완료 시 정가(19,900원)로 복귀</strong>합니다.
     </div>
+
     <div class="pricing-includes">
       <div class="include-item">
         <span class="icon">✦</span>
-        <span><strong>203문항 Word + PDF (번호별)</strong> — 20~42번, 9유형 전체</span>
+        <span><strong>203문항 Word + PDF + HWP</strong> — 전 지문 18개, 10여 유형</span>
       </div>
       <div class="include-item">
         <span class="icon">✦</span>
-        <span><strong>203문항 Word + PDF (유형별)</strong> — 유형 중심 재편집본</span>
+        <span><strong>번호별 · 유형별 2종 구성</strong> — 필요한 구성으로 바로 사용</span>
       </div>
       <div class="include-item">
         <span class="icon">✦</span>
-        <span><strong>SF Exam Builder (HTML 앱)</strong> — 지문 선택 → 30초 출제</span>
+        <span><strong>SF Exam Builder 앱</strong> — 설치 없이 브라우저에서 자동 출제</span>
       </div>
       <div class="include-item">
         <span class="icon">✦</span>
-        <span><strong>서술형 세트 1·2</strong> — 보기형 + 본문찾기형 각 18문항</span>
+        <span><strong>서술형 세트 포함</strong> — 보기형 + 본문찾기형</span>
       </div>
       <div class="include-item">
         <span class="icon">✦</span>
-        <span><strong>문항별 해설 포함</strong> — 정답 근거 + 오답 풀이</span>
+        <span><strong>함축 문항 + 문항별 해설</strong> — 정답 근거 + 오답 풀이</span>
       </div>
     </div>
-    <a href="http://pf.kakao.com/_xoxlxdZX" class="pricing-cta" target="_blank">카카오로 구매 문의하기 →</a>
-    <p class="pricing-note" style="margin-top:10px; color:var(--gold); font-size:0.8rem;">크몽 승인 완료 후 바로 구매 가능 예정</p>
-    <p class="pricing-free" style="margin-top:12px;">
+
+    <!-- 메인 CTA: 크몽 바로 구매 (URL은 대은님이 공유하시면 교체) -->
+    <a href="https://kmong.com/gig/761397" class="pricing-cta" target="_blank" rel="noopener">크몽에서 바로 구매하기 →</a>
+    <p class="pricing-note" style="margin-top:10px; color:var(--ink-dim); font-size:0.78rem;">구매 전 궁금한 점은 카카오채널로 문의해주세요</p>
+
+    <p class="pricing-free" style="margin-top:16px;">
       퀄리티 먼저 검증해보세요 →&nbsp;
-      <a href="https://docs.google.com/document/d/1NVOHNANfChqWuhlLiFOr47OuwOtxmwFy/edit?usp=sharing&ouid=104556120314050750894&rtpof=true&sd=true" target="_blank">무료 50문항 다운로드</a>
+      <a href="http://pf.kakao.com/_xoxlxdZX/friend" target="_blank" rel="noopener">카톡채널 추가하고 무료 50문항 받기 💬</a>
     </p>
   </div>
 </section>
@@ -1253,6 +1333,17 @@
       chip.classList.toggle('active');
       chip.classList.toggle('default');
     });
+  });
+
+  /* ── [체험판 iframe] → 부모창 Pricing 섹션 스크롤 ──────────────── */
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'sf-trial-cta') {
+      var target = e.data.target === 'pricing' ? '#pricing' : '#app';
+      var el = document.querySelector(target);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   });
 </script>
 </body>
